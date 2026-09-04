@@ -1,5 +1,37 @@
 [
   {
+    "type": "literal",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "typed_literal",
+        "named": true
+      },
+      {
+        "type": "untyped_literal",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "untyped_literal",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "decimal_literal",
+        "named": true
+      },
+      {
+        "type": "integer_literal",
+        "named": true
+      },
+      {
+        "type": "string_literal",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "builtin_type",
     "named": true,
     "fields": {
@@ -19,6 +51,91 @@
         "types": [
           {
             "type": "type_parameters",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "enum_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "enum_constant_definition",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "enum_constant_definition",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "initial",
+            "named": true
+          },
+          {
+            "type": "literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "enum_type_definition",
+    "named": true,
+    "fields": {
+      "base_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "builtin_type",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "enum_body",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
             "named": true
           }
         ]
@@ -65,6 +182,10 @@
       "required": false,
       "types": [
         {
+          "type": "enum_type_definition",
+          "named": true
+        },
+        {
           "type": "simple_type_definition",
           "named": true
         }
@@ -98,6 +219,32 @@
     }
   },
   {
+    "type": "typed_literal",
+    "named": true,
+    "fields": {
+      "type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "builtin_type_name",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "(",
     "named": false
   },
@@ -118,7 +265,15 @@
     "named": false
   },
   {
+    "type": "=",
+    "named": false
+  },
+  {
     "type": "builtin_type_name",
+    "named": true
+  },
+  {
+    "type": "decimal_literal",
     "named": true
   },
   {
@@ -126,7 +281,27 @@
     "named": true
   },
   {
+    "type": "initial",
+    "named": true
+  },
+  {
+    "type": "integer_literal",
+    "named": true
+  },
+  {
+    "type": "string_literal",
+    "named": true
+  },
+  {
     "type": "unsigned_integer",
     "named": true
+  },
+  {
+    "type": "{",
+    "named": false
+  },
+  {
+    "type": "}",
+    "named": false
   }
 ]

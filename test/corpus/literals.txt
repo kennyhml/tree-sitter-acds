@@ -1,0 +1,136 @@
+==================
+Signed integer and decimal literals
+==================
+
+define type numeric_literals : abap.int4 enum
+{
+  ZERO = initial;
+  POSITIVE = +1;
+  NEGATIVE = -2;
+  DECIMAL = 10.25;
+  NEGATIVE_DECIMAL = -0.5;
+}
+
+---
+
+(source_file
+  (enum_type_definition
+    name: (identifier)
+    base_type: (builtin_type
+      name: (builtin_type_name))
+    body: (enum_body
+      (enum_constant_definition
+        name: (identifier)
+        value: (initial))
+      (enum_constant_definition
+        name: (identifier)
+        value: (integer_literal))
+      (enum_constant_definition
+        name: (identifier)
+        value: (integer_literal))
+      (enum_constant_definition
+        name: (identifier)
+        value: (decimal_literal))
+      (enum_constant_definition
+        name: (identifier)
+        value: (decimal_literal)))))
+
+==================
+Escaped character literals
+==================
+
+define type character_literals : abap.char(8) enum
+{
+  EMPTY = initial;
+  QUOTE = 'It''s';
+  BACKSLASH = 'C:\\temp';
+  BOTH = 'It''s\\set';
+}
+
+---
+
+(source_file
+  (enum_type_definition
+    name: (identifier)
+    base_type: (builtin_type
+      name: (builtin_type_name)
+      parameters: (type_parameters
+        length: (unsigned_integer)))
+    body: (enum_body
+      (enum_constant_definition
+        name: (identifier)
+        value: (initial))
+      (enum_constant_definition
+        name: (identifier)
+        value: (string_literal))
+      (enum_constant_definition
+        name: (identifier)
+        value: (string_literal))
+      (enum_constant_definition
+        name: (identifier)
+        value: (string_literal)))))
+
+==================
+Typed literals
+==================
+
+define type typed_literals : abap.char(8) enum
+{
+  EMPTY = initial;
+  DATE_VALUE = abap.dats'20200101';
+  TEXT_VALUE = abap.char'A''B\\C';
+}
+
+---
+
+(source_file
+  (enum_type_definition
+    name: (identifier)
+    base_type: (builtin_type
+      name: (builtin_type_name)
+      parameters: (type_parameters
+        length: (unsigned_integer)))
+    body: (enum_body
+      (enum_constant_definition
+        name: (identifier)
+        value: (initial))
+      (enum_constant_definition
+        name: (identifier)
+        value: (typed_literal
+          type: (builtin_type_name)
+          value: (string_literal)))
+      (enum_constant_definition
+        name: (identifier)
+        value: (typed_literal
+          type: (builtin_type_name)
+          value: (string_literal))))))
+
+==================
+Unescaped backslash
+:error
+==================
+
+define type invalid_literal : abap.char(8) enum
+{
+  EMPTY = initial;
+  INVALID = 'C:\temp';
+}
+
+---
+
+(source_file
+  (enum_type_definition
+    name: (identifier)
+    base_type: (builtin_type
+      name: (builtin_type_name)
+      parameters: (type_parameters
+        length: (unsigned_integer)))
+    body: (enum_body
+      (enum_constant_definition
+        name: (identifier)
+        value: (initial))
+      (ERROR
+        (identifier)
+        (UNEXPECTED 't')
+        (identifier)
+        (UNEXPECTED '\n')))))

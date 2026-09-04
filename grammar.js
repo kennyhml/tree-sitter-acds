@@ -44,10 +44,14 @@ const RESERVED_KEYWORDS = [
   /where/i,
 ];
 
+const STRING_LITERAL = /'([^'\\\r\n]|''|\\\\)*'/;
+
 export default grammar({
   name: "acds",
 
   word: ($) => $.identifier,
+
+  supertypes: ($) => [$.literal, $.untyped_literal],
 
   reserved: {
     global: (_) => RESERVED_KEYWORDS,
@@ -55,7 +59,13 @@ export default grammar({
 
   rules: {
     source_file: ($) =>
-      repeat(choice($.simple_type_definition, ...RESERVED_KEYWORDS)),
+      repeat(
+        choice(
+          $.enum_type_definition,
+          $.simple_type_definition,
+          ...RESERVED_KEYWORDS,
+        ),
+      ),
 
     /*
      * - A name must start with a letter, slash character, or underscore.
@@ -75,6 +85,39 @@ export default grammar({
           /\/[a-z0-9_]+\/[a-z_][a-z0-9_]*/i, // namespaced
         ),
       ),
+
+    literal: ($) => choice($.untyped_literal, $.typed_literal),
+
+    untyped_literal: ($) =>
+      choice($.integer_literal, $.decimal_literal, $.string_literal),
+
+    /*
+     * A typed literal prefixes a single-quoted value with an ABAP Dictionary
+     * data type from the `abap` type namespace.
+     *
+     * Example: abap.dats'20200101'
+     */
+    typed_literal: ($) =>
+      seq(
+        field("type", $.builtin_type_name),
+        field(
+          "value",
+          alias(token.immediate(STRING_LITERAL), $.string_literal),
+        ),
+      ),
+
+    /*
+     * An untyped numeric literal can be prefixed directly by a sign. A decimal
+     * point, when present, must follow at least one digit.
+     */
+    integer_literal: (_) => /[+-]?[0-9]+/,
+
+    decimal_literal: (_) => /[+-]?[0-9]+\.[0-9]+/,
+
+    /*
+     * A single quote is escaped as `''` and a backslash as `\\`.
+     */
+    string_literal: (_) => token(STRING_LITERAL),
 
     /*
      * Builtin ABAP data types, prefixed with `abap`.
@@ -110,7 +153,7 @@ export default grammar({
      * ...
      * DEFINE TYPE simple_type : dtype | data_element | simple_type
      *
-     * We cannot tell data elements and simple types apart syncactically.
+     * We cannot tell data elements and simple types apart syntactically.
      *
      * Semicolons are optional for simple statements like this.
      *
@@ -125,5 +168,48 @@ export default grammar({
         field("type", choice($.builtin_type, $.identifier)),
         optional(";"),
       ),
+
+    /*
+     * [@type_annot1]
+     * [@type_annot2]
+     * ...
+     * DEFINE TYPE EnumType : BaseType ENUM
+     * {
+     *   [@enum_annot1]
+     *   EnumConstant1 = EnumValue1 | INITIAL;
+     *   [@enum_annot2]
+     *   EnumConstant2 = EnumValue2 | INITIAL;
+     *   [...]
+     * }
+     * | DEFINE TYPE EnumTypeStack : EnumTypeBase[;]
+     *
+     * Syntactically, there is no way to tell an enum stack definition
+     * apart from a simple type when the ENUM keyword is omitted.
+     *
+     * @see https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENCDS_DEFINE_ENUM_TYPE.html
+     */
+    enum_type_definition: ($) =>
+      seq(
+        /define/i,
+        /type/i,
+        field("name", $.identifier),
+        ":",
+        field("base_type", choice($.builtin_type, $.identifier)),
+        /enum/i,
+        field("body", $.enum_body),
+      ),
+
+    enum_body: ($) => seq("{", repeat1($.enum_constant_definition), "}"),
+
+    // EnumConstant1 = EnumValue1 | INITIAL;
+    enum_constant_definition: ($) =>
+      seq(
+        field("name", $.identifier),
+        "=",
+        field("value", choice($.literal, $.initial)),
+        ";",
+      ),
+
+    initial: (_) => /initial/i,
   },
 });

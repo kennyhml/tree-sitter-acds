@@ -1,0 +1,117 @@
+==================
+Integer enum
+==================
+
+define type weekday_type : abap.int1 enum
+{
+  MON = initial;
+  TUE = 1;
+  WED = 2;
+}
+
+---
+
+(source_file
+  (enum_type_definition
+    name: (identifier)
+    base_type: (builtin_type
+      name: (builtin_type_name))
+    body: (enum_body
+      (enum_constant_definition
+        name: (identifier)
+        value: (initial))
+      (enum_constant_definition
+        name: (identifier)
+        value: (integer_literal))
+      (enum_constant_definition
+        name: (identifier)
+        value: (integer_literal)))))
+
+==================
+Character enum
+==================
+
+DEFINE TYPE boolean_type : ABAP.CHAR(1) ENUM
+{
+  FALSE_VALUE = INITIAL;
+  TRUE_VALUE = 'X';
+}
+
+---
+
+(source_file
+  (enum_type_definition
+    name: (identifier)
+    base_type: (builtin_type
+      name: (builtin_type_name)
+      parameters: (type_parameters
+        length: (unsigned_integer)))
+    body: (enum_body
+      (enum_constant_definition
+        name: (identifier)
+        value: (initial))
+      (enum_constant_definition
+        name: (identifier)
+        value: (string_literal)))))
+
+==================
+Named base type and escaped string
+==================
+
+Define Type status_type : status_base Enum
+{
+  UNKNOWN = Initial;
+  MESSAGE = 'It''s set';
+}
+
+---
+
+(source_file
+  (enum_type_definition
+    name: (identifier)
+    base_type: (identifier)
+    body: (enum_body
+      (enum_constant_definition
+        name: (identifier)
+        value: (initial))
+      (enum_constant_definition
+        name: (identifier)
+        value: (string_literal)))))
+
+==================
+Namespaced enum
+==================
+
+define type /DMO/status_type : abap.int2 enum
+{
+  INITIAL_VALUE = initial;
+  ENABLED = 1;
+}
+
+---
+
+(source_file
+  (enum_type_definition
+    name: (identifier)
+    base_type: (builtin_type
+      name: (builtin_type_name))
+    body: (enum_body
+      (enum_constant_definition
+        name: (identifier)
+        value: (initial))
+      (enum_constant_definition
+        name: (identifier)
+        value: (integer_literal)))))
+
+==================
+Enum stack is a simple type
+==================
+
+define type weekday_stack : weekday_type;
+
+---
+
+(source_file
+  (simple_type_definition
+    name: (identifier)
+    type: (identifier)))
