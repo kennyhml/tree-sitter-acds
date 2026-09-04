@@ -1,5 +1,35 @@
 [
   {
+    "type": "annotation_value",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "annotation_array",
+        "named": true
+      },
+      {
+        "type": "annotation_structure",
+        "named": true
+      },
+      {
+        "type": "boolean_literal",
+        "named": true
+      },
+      {
+        "type": "enum_literal",
+        "named": true
+      },
+      {
+        "type": "null_literal",
+        "named": true
+      },
+      {
+        "type": "untyped_literal",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "literal",
     "named": true,
     "subtypes": [
@@ -26,10 +56,109 @@
         "named": true
       },
       {
+        "type": "scientific_literal",
+        "named": true
+      },
+      {
         "type": "string_literal",
         "named": true
       }
     ]
+  },
+  {
+    "type": "annotation",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "sub_annotation",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "annotation_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "annotation_array",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "annotation_value",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "annotation_property",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "sub_annotation",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "annotation_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "annotation_structure",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "annotation_property",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "boolean_literal",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "builtin_type",
@@ -100,7 +229,38 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "annotation",
+          "named": true
+        }
+      ]
     }
+  },
+  {
+    "type": "enum_literal",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "enum_symbol",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "enum_symbol",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "enum_type_definition",
@@ -140,7 +300,27 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "annotation",
+          "named": true
+        }
+      ]
     }
+  },
+  {
+    "type": "identifier",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "null_literal",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "simple_type_definition",
@@ -170,6 +350,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "annotation",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -190,6 +380,36 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "sub_annotation",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "parent": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "sub_annotation",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -245,6 +465,10 @@
     }
   },
   {
+    "type": "#",
+    "named": false
+  },
+  {
     "type": "(",
     "named": false
   },
@@ -257,6 +481,10 @@
     "named": false
   },
   {
+    "type": ".",
+    "named": false
+  },
+  {
     "type": ":",
     "named": false
   },
@@ -266,6 +494,22 @@
   },
   {
     "type": "=",
+    "named": false
+  },
+  {
+    "type": "@",
+    "named": false
+  },
+  {
+    "type": "@<",
+    "named": false
+  },
+  {
+    "type": "[",
+    "named": false
+  },
+  {
+    "type": "]",
     "named": false
   },
   {
@@ -282,10 +526,6 @@
     "named": true
   },
   {
-    "type": "identifier",
-    "named": true
-  },
-  {
     "type": "initial",
     "named": true
   },
@@ -297,6 +537,10 @@
     "type": "line_comment",
     "named": true,
     "extra": true
+  },
+  {
+    "type": "scientific_literal",
+    "named": true
   },
   {
     "type": "string_literal",

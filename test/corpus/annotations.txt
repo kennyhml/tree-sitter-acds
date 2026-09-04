@@ -1,0 +1,137 @@
+==================
+Scalar and marker-only annotations
+==================
+
+@EndUserText.label: 'Customer\'s status'
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@Demo.booleanValue: true
+@Demo.nullValue: null
+@Demo.defaults.enabled
+define type status_text : abap.char(20);
+
+---
+
+(source_file
+  (simple_type_definition
+    (annotation
+      name: (sub_annotation
+        parent: (identifier)
+        name: (identifier))
+      value: (string_literal))
+    (annotation
+      name: (sub_annotation
+        parent: (identifier)
+        name: (identifier))
+      value: (enum_literal
+        value: (enum_symbol)))
+    (annotation
+      name: (sub_annotation
+        parent: (identifier)
+        name: (identifier))
+      value: (boolean_literal))
+    (annotation
+      name: (sub_annotation
+        parent: (identifier)
+        name: (identifier))
+      value: (null_literal))
+    (annotation
+      name: (sub_annotation
+        parent: (sub_annotation
+          parent: (identifier)
+          name: (identifier))
+        name: (identifier)))
+    name: (identifier)
+    type: (builtin_type
+      name: (builtin_type_name)
+      parameters: (type_parameters
+        length: (unsigned_integer)))))
+
+==================
+Nested arrays and structures
+==================
+
+@Demo.values: [
+  1234.5678E-4,
+  [true, false],
+  {
+    enabled,
+    label: 'A',
+    nested: { code: #ACTIVE }
+  }
+]
+define type annotated_number : abap.dec(10, 4);
+
+---
+
+(source_file
+  (simple_type_definition
+    (annotation
+      name: (sub_annotation
+        parent: (identifier)
+        name: (identifier))
+      value: (annotation_array
+        (scientific_literal)
+        (annotation_array
+          (boolean_literal)
+          (boolean_literal))
+        (annotation_structure
+          (annotation_property
+            name: (identifier))
+          (annotation_property
+            name: (identifier)
+            value: (string_literal))
+          (annotation_property
+            name: (identifier)
+            value: (annotation_structure
+              (annotation_property
+                name: (identifier)
+                value: (enum_literal
+                  value: (enum_symbol))))))))
+    name: (identifier)
+    type: (builtin_type
+      name: (builtin_type_name)
+      parameters: (type_parameters
+        length: (unsigned_integer)
+        decimals: (unsigned_integer)))))
+
+==================
+Enum and enum constant annotations
+==================
+
+@EndUserText.label: 'Weekday'
+define type weekday : abap.int1 enum
+{
+  @EndUserText.label: 'Monday'
+  MON = 1;
+  @<Demo.after
+  TUE = 2;
+}
+
+---
+
+(source_file
+  (enum_type_definition
+    (annotation
+      name: (sub_annotation
+        parent: (identifier)
+        name: (identifier))
+      value: (string_literal))
+    name: (identifier)
+    base_type: (builtin_type
+      name: (builtin_type_name))
+    body: (enum_body
+      (enum_constant_definition
+        (annotation
+          name: (sub_annotation
+            parent: (identifier)
+            name: (identifier))
+          value: (string_literal))
+        name: (identifier)
+        value: (integer_literal))
+      (enum_constant_definition
+        (annotation
+          name: (sub_annotation
+            parent: (identifier)
+            name: (identifier)))
+        name: (identifier)
+        value: (integer_literal)))))

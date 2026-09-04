@@ -269,6 +269,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "scientific_literal"
+        },
+        {
+          "type": "SYMBOL",
           "name": "string_literal"
         }
       ]
@@ -293,7 +297,7 @@
               "type": "IMMEDIATE_TOKEN",
               "content": {
                 "type": "PATTERN",
-                "value": "'([^'\\\\\\r\\n]|''|\\\\\\\\)*'"
+                "value": "'([^'\\\\\\r\\n]|''|\\\\['\\\\])*'"
               }
             },
             "named": true,
@@ -310,11 +314,15 @@
       "type": "PATTERN",
       "value": "[+-]?[0-9]+\\.[0-9]+"
     },
+    "scientific_literal": {
+      "type": "PATTERN",
+      "value": "[+-]?[0-9]+(\\.[0-9]+)?[eE][+-]?[0-9]+"
+    },
     "string_literal": {
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "'([^'\\\\\\r\\n]|''|\\\\\\\\)*'"
+        "value": "'([^'\\\\\\r\\n]|''|\\\\['\\\\])*'"
       }
     },
     "builtin_type": {
@@ -404,9 +412,366 @@
       "type": "PATTERN",
       "value": "[0-9]+"
     },
+    "annotation": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "@<"
+            },
+            {
+              "type": "STRING",
+              "value": "@"
+            }
+          ]
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_annotation_identifier"
+                },
+                "named": true,
+                "value": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "sub_annotation"
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ":"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "value",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "annotation_value"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "sub_annotation": {
+      "type": "PREC_LEFT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "parent",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_annotation_identifier"
+                  },
+                  "named": true,
+                  "value": "identifier"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "sub_annotation"
+                }
+              ]
+            }
+          },
+          {
+            "type": "IMMEDIATE_TOKEN",
+            "content": {
+              "type": "STRING",
+              "value": "."
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "name",
+            "content": {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_immediate_annotation_identifier"
+              },
+              "named": true,
+              "value": "identifier"
+            }
+          }
+        ]
+      }
+    },
+    "_annotation_identifier": {
+      "type": "TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "[a-z][a-z0-9_]*",
+        "flags": "i"
+      }
+    },
+    "_immediate_annotation_identifier": {
+      "type": "IMMEDIATE_TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "[a-z][a-z0-9_]*",
+        "flags": "i"
+      }
+    },
+    "annotation_value": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "untyped_literal"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "enum_literal"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "boolean_literal"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "null_literal"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "annotation_array"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "annotation_structure"
+        }
+      ]
+    },
+    "annotation_array": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "["
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "annotation_value"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "annotation_value"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "]"
+        }
+      ]
+    },
+    "annotation_structure": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "annotation_property"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "annotation_property"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
+    "annotation_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_annotation_identifier"
+                },
+                "named": true,
+                "value": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "sub_annotation"
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ":"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "value",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "annotation_value"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "enum_literal": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "#"
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "enum_symbol"
+          }
+        }
+      ]
+    },
+    "enum_symbol": {
+      "type": "IMMEDIATE_TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "[a-z][a-z0-9_]*",
+        "flags": "i"
+      }
+    },
+    "boolean_literal": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "true",
+          "flags": "i"
+        },
+        {
+          "type": "PATTERN",
+          "value": "false",
+          "flags": "i"
+        }
+      ]
+    },
+    "null_literal": {
+      "type": "PATTERN",
+      "value": "null",
+      "flags": "i"
+    },
     "simple_type_definition": {
       "type": "SEQ",
       "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "annotation"
+          }
+        },
         {
           "type": "PATTERN",
           "value": "define",
@@ -463,6 +828,13 @@
     "enum_type_definition": {
       "type": "SEQ",
       "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "annotation"
+          }
+        },
         {
           "type": "PATTERN",
           "value": "define",
@@ -541,6 +913,13 @@
       "type": "SEQ",
       "members": [
         {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "annotation"
+          }
+        },
+        {
           "type": "FIELD",
           "name": "name",
           "content": {
@@ -601,7 +980,8 @@
   "inline": [],
   "supertypes": [
     "literal",
-    "untyped_literal"
+    "untyped_literal",
+    "annotation_value"
   ],
   "reserved": {
     "global": [

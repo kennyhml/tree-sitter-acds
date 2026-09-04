@@ -44,7 +44,8 @@ const RESERVED_KEYWORDS = [
   /where/i,
 ];
 
-const STRING_LITERAL = /'([^'\\\r\n]|''|\\\\)*'/;
+const STRING_LITERAL = /'([^'\\\r\n]|''|\\['\\])*'/;
+const ANNOTATION_IDENTIFIER = /[a-z][a-z0-9_]*/i;
 
 export default grammar({
   name: "acds",
@@ -53,7 +54,7 @@ export default grammar({
 
   extras: ($) => [/\s/, $.line_comment, $.block_comment],
 
-  supertypes: ($) => [$.literal, $.untyped_literal],
+  supertypes: ($) => [$.literal, $.untyped_literal, $.annotation_value],
 
   reserved: {
     global: (_) => RESERVED_KEYWORDS,
@@ -97,7 +98,12 @@ export default grammar({
     literal: ($) => choice($.untyped_literal, $.typed_literal),
 
     untyped_literal: ($) =>
-      choice($.integer_literal, $.decimal_literal, $.string_literal),
+      choice(
+        $.integer_literal,
+        $.decimal_literal,
+        $.scientific_literal,
+        $.string_literal,
+      ),
 
     /*
      * A typed literal prefixes a single-quoted value with an ABAP Dictionary
@@ -122,8 +128,10 @@ export default grammar({
 
     decimal_literal: (_) => /[+-]?[0-9]+\.[0-9]+/,
 
+    scientific_literal: (_) => /[+-]?[0-9]+(\.[0-9]+)?[eE][+-]?[0-9]+/,
+
     /*
-     * A single quote is escaped as `''` and a backslash as `\\`.
+     * A single quote is escaped as `''` or `\'` and a backslash as `\\`.
      */
     string_literal: (_) => token(STRING_LITERAL),
 
@@ -156,6 +164,100 @@ export default grammar({
     unsigned_integer: (_) => /[0-9]+/,
 
     /*
+     * @[<]Anno[:value]
+     *        |[: { subannos } ]
+     *        |[: [ arrelem ] ]
+     *        |[.subAnno[ ... ]]
+     *
+     * @see https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENCDS_ANNOTATIONS_SYNTAX.html
+     */
+    annotation: ($) =>
+      seq(
+        // @< places an annotation after a list element instead of before it.
+        choice("@<", "@"),
+        field(
+          "name",
+          choice(alias($._annotation_identifier, $.identifier), $.sub_annotation),
+        ),
+        optional(seq(":", field("value", $.annotation_value))),
+      ),
+
+    sub_annotation: ($) =>
+      prec.left(
+        seq(
+          field(
+            "parent",
+            choice(
+              alias($._annotation_identifier, $.identifier),
+              $.sub_annotation,
+            ),
+          ),
+          token.immediate("."),
+          field(
+            "name",
+            alias($._immediate_annotation_identifier, $.identifier),
+          ),
+        ),
+      ),
+
+    _annotation_identifier: (_) => token(ANNOTATION_IDENTIFIER),
+
+    _immediate_annotation_identifier: (_) =>
+      token.immediate(ANNOTATION_IDENTIFIER),
+
+    /*
+     * ... literal
+     * | #SYMBOL
+     * | true|false
+     * | #(unchecked expression)
+     * | null
+     *
+     * @see https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENCDS_ANNOTATIONS_SYNTAX_VALUE.html
+     */
+    annotation_value: ($) =>
+      choice(
+        // TODO: unchecked expressions
+        $.untyped_literal,
+        $.enum_literal,
+        $.boolean_literal,
+        $.null_literal,
+        $.annotation_array,
+        $.annotation_structure,
+      ),
+
+    /*
+     * [ ...  value1 |{subannos1},
+     *        value2 |{subannos2},
+     *        ...
+     * @see https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENCDS_ANNOTATIONS_SYNTAX_ARRAY.html
+     */
+    annotation_array: ($) =>
+      seq("[", optional(commaSep1($.annotation_value)), "]"),
+
+    annotation_structure: ($) =>
+      seq("{", optional(commaSep1($.annotation_property)), "}"),
+
+    annotation_property: ($) =>
+      seq(
+        field(
+          "name",
+          choice(alias($._annotation_identifier, $.identifier), $.sub_annotation),
+        ),
+        optional(seq(":", field("value", $.annotation_value))),
+      ),
+
+    // Enumeration symbols #SYMBOL
+    enum_literal: ($) => seq("#", field("value", $.enum_symbol)),
+
+    enum_symbol: (_) => token.immediate(/[a-z][a-z0-9_]*/i),
+
+    // Boolean values are case-insensitive and can also be quoted as strings.
+    boolean_literal: (_) => choice(/true/i, /false/i),
+
+    // null can only be assigned to annotations that allow it.
+    null_literal: (_) => /null/i,
+
+    /*
      * [@type_annot1]
      * [@type_annot2]
      * ...
@@ -169,6 +271,7 @@ export default grammar({
      */
     simple_type_definition: ($) =>
       seq(
+        repeat($.annotation),
         /define/i,
         /type/i,
         field("name", $.identifier),
@@ -198,6 +301,7 @@ export default grammar({
      */
     enum_type_definition: ($) =>
       seq(
+        repeat($.annotation),
         /define/i,
         /type/i,
         field("name", $.identifier),
@@ -212,6 +316,7 @@ export default grammar({
     // EnumConstant1 = EnumValue1 | INITIAL;
     enum_constant_definition: ($) =>
       seq(
+        repeat($.annotation),
         field("name", $.identifier),
         "=",
         field("value", choice($.literal, $.initial)),
@@ -221,3 +326,7 @@ export default grammar({
     initial: (_) => /initial/i,
   },
 });
+
+function commaSep1(rule) {
+  return seq(rule, repeat(seq(",", rule)));
+}
