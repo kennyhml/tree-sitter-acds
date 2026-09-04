@@ -1,0 +1,535 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/grammar.schema.json",
+  "name": "acds",
+  "word": "identifier",
+  "rules": {
+    "source_file": {
+      "type": "REPEAT",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "simple_type_definition"
+          },
+          {
+            "type": "PATTERN",
+            "value": "all",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "and",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "as",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "association",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "avg",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "case",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "cast",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "count",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "cross",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "distinct",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "exists",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "extend",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "from",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "full",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "group",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "having",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "inner",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "join",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "key",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "left",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "max",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "min",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "not",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "null",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "on",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "or",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "order",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "right",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "select",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "sum",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "union",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "view",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "when",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "where",
+            "flags": "i"
+          }
+        ]
+      }
+    },
+    "identifier": {
+      "type": "TOKEN",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "PATTERN",
+            "value": "[a-z_][a-z0-9_]*",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\/[a-z0-9_]+\\/[a-z_][a-z0-9_]*",
+            "flags": "i"
+          }
+        ]
+      }
+    },
+    "builtin_type": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "builtin_type_name"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "parameters",
+              "content": {
+                "type": "SYMBOL",
+                "name": "type_parameters"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "builtin_type_name": {
+      "type": "TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "abap\\.[a-z_][a-z0-9_]*",
+        "flags": "i"
+      }
+    },
+    "type_parameters": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "FIELD",
+          "name": "length",
+          "content": {
+            "type": "SYMBOL",
+            "name": "unsigned_integer"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ","
+                },
+                {
+                  "type": "FIELD",
+                  "name": "decimals",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "unsigned_integer"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
+    },
+    "unsigned_integer": {
+      "type": "PATTERN",
+      "value": "[0-9]+"
+    },
+    "simple_type_definition": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "define",
+          "flags": "i"
+        },
+        {
+          "type": "PATTERN",
+          "value": "type",
+          "flags": "i"
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "FIELD",
+          "name": "type",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "builtin_type"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": ";"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "extras": [
+    {
+      "type": "PATTERN",
+      "value": "\\s"
+    }
+  ],
+  "conflicts": [],
+  "precedences": [],
+  "externals": [],
+  "inline": [],
+  "supertypes": [],
+  "reserved": {
+    "global": [
+      {
+        "type": "PATTERN",
+        "value": "all",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "and",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "as",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "association",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "avg",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "case",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "cast",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "count",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "cross",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "distinct",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "exists",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "extend",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "from",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "full",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "group",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "having",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "inner",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "join",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "key",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "left",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "max",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "min",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "not",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "null",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "on",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "or",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "order",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "right",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "select",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "sum",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "union",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "view",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "when",
+        "flags": "i"
+      },
+      {
+        "type": "PATTERN",
+        "value": "where",
+        "flags": "i"
+      }
+    ]
+  }
+}

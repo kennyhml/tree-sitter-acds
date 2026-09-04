@@ -1,0 +1,72 @@
+==================
+Built-in type without parameters
+==================
+
+define type string_type : abap.string
+
+---
+
+(source_file
+  (simple_type_definition
+    name: (identifier)
+    type: (builtin_type
+      name: (builtin_type_name))))
+
+==================
+Built-in type with length
+==================
+
+DEFINE TYPE description_type : ABAP.CHAR( 40 );
+
+---
+
+(source_file
+  (simple_type_definition
+    name: (identifier)
+    type: (builtin_type
+      name: (builtin_type_name)
+      parameters: (type_parameters
+        length: (unsigned_integer)))))
+
+==================
+Built-in type with length and decimals
+==================
+
+Define Type amount_type : Abap.Curr(15, 2);
+
+---
+
+(source_file
+  (simple_type_definition
+    name: (identifier)
+    type: (builtin_type
+      name: (builtin_type_name)
+      parameters: (type_parameters
+        length: (unsigned_integer)
+        decimals: (unsigned_integer)))))
+
+==================
+Named type reference
+==================
+
+define type customer_type : zcustomer_data_element
+
+---
+
+(source_file
+  (simple_type_definition
+    name: (identifier)
+    type: (identifier)))
+
+==================
+Namespaced type definition and reference
+==================
+
+DEFINE TYPE /DMO/flight_type : /DMO/flight_element
+
+---
+
+(source_file
+  (simple_type_definition
+    name: (identifier)
+    type: (identifier)))
