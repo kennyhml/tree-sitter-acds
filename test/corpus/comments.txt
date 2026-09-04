@@ -1,0 +1,79 @@
+==================
+Line comments
+==================
+
+// leading comment
+define // between keywords
+type comment_type : abap.string; // trailing comment
+
+---
+
+(source_file
+  (line_comment)
+  (simple_type_definition
+    (line_comment)
+    name: (identifier)
+    type: (builtin_type
+      name: (builtin_type_name)))
+  (line_comment))
+
+==================
+Inline and multiline block comments
+==================
+
+/* leading
+   multiline comment */
+define/* between keywords */type block_type : abap.char(/* length */ 10)/* before terminator */;
+
+---
+
+(source_file
+  (block_comment)
+  (simple_type_definition
+    (block_comment)
+    name: (identifier)
+    type: (builtin_type
+      name: (builtin_type_name)
+      parameters: (type_parameters
+        (block_comment)
+        length: (unsigned_integer)))
+    (block_comment)))
+
+==================
+Comment markers inside strings
+==================
+
+define type comment_markers : abap.char(30) enum
+{
+  EMPTY = initial;
+  URL = 'https://sap.example/*docs*/';
+}
+
+---
+
+(source_file
+  (enum_type_definition
+    name: (identifier)
+    base_type: (builtin_type
+      name: (builtin_type_name)
+      parameters: (type_parameters
+        length: (unsigned_integer)))
+    body: (enum_body
+      (enum_constant_definition
+        name: (identifier)
+        value: (initial))
+      (enum_constant_definition
+        name: (identifier)
+        value: (string_literal)))))
+
+==================
+Unterminated block comment
+:error
+==================
+
+/* unterminated comment
+define type hidden_type : abap.string;
+
+---
+
+

@@ -51,6 +51,8 @@ export default grammar({
 
   word: ($) => $.identifier,
 
+  extras: ($) => [/\s/, $.line_comment, $.block_comment],
+
   supertypes: ($) => [$.literal, $.untyped_literal],
 
   reserved: {
@@ -66,6 +68,12 @@ export default grammar({
           ...RESERVED_KEYWORDS,
         ),
       ),
+
+    // Two forward slashes (//) introduce a comment, which continues until the end of the line.
+    line_comment: (_) => token(seq("//", /[^\r\n]*/)),
+
+    // Comments within lines or that span multiple lines are enclosed by the characters /* and */.
+    block_comment: (_) => token(seq("/*", /[^*]*\*+([^/*][^*]*\*+)*/, "/")),
 
     /*
      * - A name must start with a letter, slash character, or underscore.

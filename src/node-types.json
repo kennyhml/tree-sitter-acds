@@ -269,6 +269,11 @@
     "named": false
   },
   {
+    "type": "block_comment",
+    "named": true,
+    "extra": true
+  },
+  {
     "type": "builtin_type_name",
     "named": true
   },
@@ -287,6 +292,11 @@
   {
     "type": "integer_literal",
     "named": true
+  },
+  {
+    "type": "line_comment",
+    "named": true,
+    "extra": true
   },
   {
     "type": "string_literal",
