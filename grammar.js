@@ -66,6 +66,7 @@ export default grammar({
         choice(
           $.enum_type_definition,
           $.simple_type_definition,
+          $.scalar_function_definition,
           ...RESERVED_KEYWORDS,
         ),
       ),
@@ -177,7 +178,10 @@ export default grammar({
         choice("@<", "@"),
         field(
           "name",
-          choice(alias($._annotation_identifier, $.identifier), $.sub_annotation),
+          choice(
+            alias($._annotation_identifier, $.identifier),
+            $.sub_annotation,
+          ),
         ),
         optional(seq(":", field("value", $.annotation_value))),
       ),
@@ -241,7 +245,10 @@ export default grammar({
       seq(
         field(
           "name",
-          choice(alias($._annotation_identifier, $.identifier), $.sub_annotation),
+          choice(
+            alias($._annotation_identifier, $.identifier),
+            $.sub_annotation,
+          ),
         ),
         optional(seq(":", field("value", $.annotation_value))),
       ),
@@ -324,9 +331,184 @@ export default grammar({
       ),
 
     initial: (_) => /initial/i,
+
+    /*
+     * DEFINE SCALAR FUNCTION ScalarFunction
+     *   [WITH PARAMETERS pname1 : typing
+     *                    [, pname2 : typing]
+     *                    [, ...]]
+     *   RETURNS typing[;]
+     *
+     * @see https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENCDS_DEFINE_SCALAR_FUNCTION.html
+     */
+    scalar_function_definition: ($) =>
+      seq(
+        /define/i,
+        /scalar/i,
+        /function/i,
+        field("name", $.identifier),
+        optional(field("parameters", $.function_parameters)),
+        field("returns", $.function_return_type),
+        optional(";"),
+      ),
+
+    function_return_type: ($) =>
+      seq(/returns/i, field("type", $.scalar_typing)),
+
+    /*
+     * ... [WITH PARAMETERS pname1 : typing
+     *                    [, pname2 : typing]
+     *                    [, ...]] ...
+     *
+     * Needs a dedicated rule because it has no annotation and different typing for
+     * the parameters that is not worth being permissive over - just adds ambiguity.
+     */
+    function_parameters: ($) =>
+      seq(/with/i, /parameters/i, commaSep1($.function_parameter)),
+
+    /*
+     * ... [@parameter_annot1]
+     *     [@parameter_annot2]
+     *     ...
+     *     pname : typing
+     *     [@<parameter_annot1]
+     *     [@<parameter_annot2]
+     *     ...
+     *
+     * @see https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENCDS_F1_PARAM.html
+     */
+    view_parameter: ($) =>
+      seq(
+        field("name", $.identifier),
+        ":",
+        choice($.identifier, $.builtin_type),
+      ),
+
+    function_parameter: ($) =>
+      seq(field("name", $.identifier), ":", field("type", $.scalar_typing)),
+
+    /*
+     * dtype                      [WITH REFERENCE TYPE]
+     * | simple_type              [WITH REFERENCE TYPE]
+     * | data_element             [WITH REFERENCE TYPE]
+     * | generic_type             [WITH REFERENCE TYPE]
+     * | TYPE OF ParameterReference [WITH REFERENCE TYPE]
+     *
+     * @see https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENCDS_SCALAR_TYPING.html
+     */
+    scalar_typing: ($) =>
+      seq(
+        field(
+          "type",
+          choice(
+            $.identifier,
+            alias(token(prec(1, /type/i)), $.identifier), // conflict with TYPE OF ...
+            $.builtin_type,
+            $.type_of,
+          ),
+        ),
+        optional(field("reference_type", $.parameter_reference_type)),
+      ),
+
+    type_of: ($) =>
+      seq(token(prec(1, /type/i)), /of/i, field("parameter", $.identifier)),
+
+    /*
+     * 1. Static Reference Type Specification
+     * WITH REFERENCE TYPE #CUKY | #UNIT | #CALC | #NONE
+     * | WITH REFERENCE TYPE [#CUKY, #UNIT, REFERENCE TYPE OF pname, ...]
+     * | WITH REFERENCE TYPE OF pname
+     *
+     * 2. Dynamic Reference Type Specification
+     *
+     * WITH REFERENCE TYPE
+     * CASE
+     * WHEN pname1: reference [AND pname2: reference][AND...]
+     *  THEN reference
+     * [WHEN ... [AND ... ] THEN ...]
+     *  [ELSE reference]
+     * END
+     *
+     * @see https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENCDS_WITH_REFERENCE_TYPE.html
+     */
+    parameter_reference_type: ($) =>
+      choice(
+        seq(
+          /with/i,
+          /reference/i,
+          /type/i,
+          field(
+            "type",
+            choice($.enum_literal, $.reference_types, $.reference_type_case),
+          ),
+        ),
+        seq(/with/i, field("type", $.reference_type_of)),
+      ),
+
+    // ... REFERENCE TYPE OF pname ...
+    reference_type_of: ($) =>
+      seq(/reference/i, /type/i, /of/i, field("parameter", $.identifier)),
+
+    // ... [ #CUKY, #UNIT, #CALC, ... ] ...
+    reference_types: ($) =>
+      seq("[", commaSep1(choice($.enum_literal, $.reference_type_of)), "]"),
+
+    /*
+     * WITH REFERENCE TYPE
+     * CASE
+     * WHEN pname1: reference [AND pname2: reference][AND...]
+     *  THEN reference
+     * [WHEN ... [AND ... ] THEN ...]
+     *  [ELSE reference]
+     * END
+     *
+     * Requiring ELSE for return parameters is left to contextual validation.
+     */
+    reference_type_case: ($) =>
+      seq(
+        /case/i,
+        repeat1($.reference_type_when_clause),
+        optional(
+          seq(
+            /else/i,
+            field("else", choice($.enum_literal, $.reference_type_of)),
+          ),
+        ),
+        /end/i,
+      ),
+
+    /*
+     * WHEN pname1: reference [AND pname2: reference][AND...]
+     *    THEN reference
+     */
+    reference_type_when_clause: ($) =>
+      seq(
+        /when/i,
+        field("condition", $.reference_type_condition),
+        /then/i,
+        field("consequence", choice($.enum_literal, $.reference_type_of)),
+      ),
+
+    // ... when pname1: { reference / reference type of pname } [and ...] ...
+    reference_type_condition: ($) =>
+      seq(
+        $.reference_type_constraint,
+        repeat(seq(/and/i, $.reference_type_constraint)),
+      ),
+
+    // ...pname1: { reference / reference type of pname } ...
+    reference_type_constraint: ($) =>
+      seq(
+        field("parameter", $.identifier),
+        ":",
+        field("type", choice($.enum_literal, $.reference_type_of)),
+      ),
   },
 });
 
+/**
+ * @param {RuleOrLiteral} rule
+ */
 function commaSep1(rule) {
   return seq(rule, repeat(seq(",", rule)));
 }

@@ -1,0 +1,441 @@
+==================
+Scalar function reference types: static list and direct return symbol
+==================
+
+define scalar function Z_STATIC
+  with parameters
+    amount: numeric with reference type [#CUKY, #UNIT, #CALC, #NONE]
+  returns abap.decfloat34 with reference type #NONE;
+
+---
+
+(source_file
+  (scalar_function_definition
+    name: (identifier)
+    parameters: (function_parameters
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (identifier)
+          reference_type: (parameter_reference_type
+            type: (reference_types
+              (enum_literal
+                value: (enum_symbol))
+              (enum_literal
+                value: (enum_symbol))
+              (enum_literal
+                value: (enum_symbol))
+              (enum_literal
+                value: (enum_symbol)))))))
+    returns: (function_return_type
+      type: (scalar_typing
+        type: (builtin_type
+          name: (builtin_type_name))
+        reference_type: (parameter_reference_type
+          type: (enum_literal
+            value: (enum_symbol)))))))
+
+==================
+Scalar function reference types: inherit input and return references
+==================
+
+define scalar function Z_INHERIT
+  with parameters
+    amount: numeric with reference type [#CUKY],
+    other: type of amount with reference type of amount
+  returns type of amount with reference type of amount
+
+---
+
+(source_file
+  (scalar_function_definition
+    name: (identifier)
+    parameters: (function_parameters
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (identifier)
+          reference_type: (parameter_reference_type
+            type: (reference_types
+              (enum_literal
+                value: (enum_symbol))))))
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (type_of
+            parameter: (identifier))
+          reference_type: (parameter_reference_type
+            type: (reference_type_of
+              parameter: (identifier))))))
+    returns: (function_return_type
+      type: (scalar_typing
+        type: (type_of
+          parameter: (identifier))
+        reference_type: (parameter_reference_type
+          type: (reference_type_of
+            parameter: (identifier)))))))
+
+==================
+Scalar function reference types: mixed reference list
+==================
+
+define scalar function Z_MIXED
+  with parameters
+    amount: numeric with reference type [#UNIT],
+    other: numeric with reference type [#CUKY, #CALC, #NONE, reference type of amount]
+  returns abap.decfloat34;
+
+---
+
+(source_file
+  (scalar_function_definition
+    name: (identifier)
+    parameters: (function_parameters
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (identifier)
+          reference_type: (parameter_reference_type
+            type: (reference_types
+              (enum_literal
+                value: (enum_symbol))))))
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (identifier)
+          reference_type: (parameter_reference_type
+            type: (reference_types
+              (enum_literal
+                value: (enum_symbol))
+              (enum_literal
+                value: (enum_symbol))
+              (enum_literal
+                value: (enum_symbol))
+              (reference_type_of
+                parameter: (identifier)))))))
+    returns: (function_return_type
+      type: (scalar_typing
+        type: (builtin_type
+          name: (builtin_type_name))))))
+
+==================
+Scalar function reference types: SAP dynamic return example
+==================
+
+define scalar function DEMO_CDS_SCALAR_REF_CASE
+  with parameters
+    p1: numeric with reference type [#CUKY, #UNIT, #CALC, #NONE],
+    p2: numeric with reference type [#CUKY, #UNIT, #CALC, #NONE],
+    p3: abap.dec(4,2) with reference type [#CUKY, #UNIT, #CALC, #NONE]
+  returns abap.dec(4,2)
+    with reference type
+      case
+        when p2: reference type of p1 then #NONE
+        else reference type of p1
+      end;
+
+---
+
+(source_file
+  (scalar_function_definition
+    name: (identifier)
+    parameters: (function_parameters
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (identifier)
+          reference_type: (parameter_reference_type
+            type: (reference_types
+              (enum_literal
+                value: (enum_symbol))
+              (enum_literal
+                value: (enum_symbol))
+              (enum_literal
+                value: (enum_symbol))
+              (enum_literal
+                value: (enum_symbol))))))
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (identifier)
+          reference_type: (parameter_reference_type
+            type: (reference_types
+              (enum_literal
+                value: (enum_symbol))
+              (enum_literal
+                value: (enum_symbol))
+              (enum_literal
+                value: (enum_symbol))
+              (enum_literal
+                value: (enum_symbol))))))
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (builtin_type
+            name: (builtin_type_name)
+            parameters: (type_parameters
+              length: (unsigned_integer)
+              decimals: (unsigned_integer)))
+          reference_type: (parameter_reference_type
+            type: (reference_types
+              (enum_literal
+                value: (enum_symbol))
+              (enum_literal
+                value: (enum_symbol))
+              (enum_literal
+                value: (enum_symbol))
+              (enum_literal
+                value: (enum_symbol)))))))
+    returns: (function_return_type
+      type: (scalar_typing
+        type: (builtin_type
+          name: (builtin_type_name)
+          parameters: (type_parameters
+            length: (unsigned_integer)
+            decimals: (unsigned_integer)))
+        reference_type: (parameter_reference_type
+          type: (reference_type_case
+            (reference_type_when_clause
+              condition: (reference_type_condition
+                (reference_type_constraint
+                  parameter: (identifier)
+                  type: (reference_type_of
+                    parameter: (identifier))))
+              consequence: (enum_literal
+                value: (enum_symbol)))
+            else: (reference_type_of
+              parameter: (identifier))))))))
+
+==================
+Scalar function reference types: multiple WHEN branches and AND conditions
+==================
+
+DEFINE SCALAR FUNCTION Z_BRANCHES
+  WITH PARAMETERS
+    p1: numeric WITH REFERENCE TYPE [#CUKY, #UNIT, #NONE],
+    p2: numeric WITH REFERENCE TYPE [#CUKY, #UNIT, #NONE]
+  RETURNS abap.decfloat34 WITH REFERENCE TYPE
+    CASE
+      WHEN p1: #CUKY AND p2: REFERENCE TYPE OF p1 THEN #NONE
+      WHEN p1: #UNIT THEN REFERENCE TYPE OF p1
+      ELSE #NONE
+    END
+
+---
+
+(source_file
+  (scalar_function_definition
+    name: (identifier)
+    parameters: (function_parameters
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (identifier)
+          reference_type: (parameter_reference_type
+            type: (reference_types
+              (enum_literal
+                value: (enum_symbol))
+              (enum_literal
+                value: (enum_symbol))
+              (enum_literal
+                value: (enum_symbol))))))
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (identifier)
+          reference_type: (parameter_reference_type
+            type: (reference_types
+              (enum_literal
+                value: (enum_symbol))
+              (enum_literal
+                value: (enum_symbol))
+              (enum_literal
+                value: (enum_symbol)))))))
+    returns: (function_return_type
+      type: (scalar_typing
+        type: (builtin_type
+          name: (builtin_type_name))
+        reference_type: (parameter_reference_type
+          type: (reference_type_case
+            (reference_type_when_clause
+              condition: (reference_type_condition
+                (reference_type_constraint
+                  parameter: (identifier)
+                  type: (enum_literal
+                    value: (enum_symbol)))
+                (reference_type_constraint
+                  parameter: (identifier)
+                  type: (reference_type_of
+                    parameter: (identifier))))
+              consequence: (enum_literal
+                value: (enum_symbol)))
+            (reference_type_when_clause
+              condition: (reference_type_condition
+                (reference_type_constraint
+                  parameter: (identifier)
+                  type: (enum_literal
+                    value: (enum_symbol))))
+              consequence: (reference_type_of
+                parameter: (identifier)))
+            else: (enum_literal
+              value: (enum_symbol))))))))
+
+==================
+Scalar function reference types: input CASE without ELSE before another parameter
+==================
+
+Define Scalar Function Z_INPUT_CASE
+  With Parameters
+    p1: numeric With Reference Type [#CUKY, #NONE],
+    p2: numeric With Reference Type
+      Case When p1: #cuky Then #none End,
+    p3: abap.dec(4,2)
+  Returns abap.decfloat34;
+
+---
+
+(source_file
+  (scalar_function_definition
+    name: (identifier)
+    parameters: (function_parameters
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (identifier)
+          reference_type: (parameter_reference_type
+            type: (reference_types
+              (enum_literal
+                value: (enum_symbol))
+              (enum_literal
+                value: (enum_symbol))))))
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (identifier)
+          reference_type: (parameter_reference_type
+            type: (reference_type_case
+              (reference_type_when_clause
+                condition: (reference_type_condition
+                  (reference_type_constraint
+                    parameter: (identifier)
+                    type: (enum_literal
+                      value: (enum_symbol))))
+                consequence: (enum_literal
+                  value: (enum_symbol)))))))
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (builtin_type
+            name: (builtin_type_name)
+            parameters: (type_parameters
+              length: (unsigned_integer)
+              decimals: (unsigned_integer))))))
+    returns: (function_return_type
+      type: (scalar_typing
+        type: (builtin_type
+          name: (builtin_type_name))))))
+
+==================
+Scalar function reference types: reject missing AND
+:error
+==================
+
+define scalar function Z_BAD with parameters p1: numeric, p2: numeric
+  returns abap.decfloat34 with reference type
+    case when p1: #NONE p2: #NONE then #NONE else #NONE end;
+
+---
+
+
+
+==================
+Scalar function reference types: reject dangling AND
+:error
+==================
+
+define scalar function Z_BAD with parameters p1: numeric
+  returns abap.decfloat34 with reference type
+    case when p1: #NONE and then #NONE else #NONE end;
+
+---
+
+
+
+==================
+Scalar function reference types: reject semicolon inside parameter CASE
+:error
+==================
+
+define scalar function Z_BAD with parameters
+  p1: numeric,
+  p2: numeric with reference type case when p1: #NONE then #NONE end;,
+  p3: numeric
+  returns abap.decfloat34;
+
+---
+
+
+
+==================
+Scalar function reference types: reject duplicate declaration terminator
+:error
+==================
+
+define scalar function Z_BAD with parameters p1: numeric
+  returns abap.decfloat34 with reference type
+    case when p1: #NONE then #NONE else #NONE end;;
+
+---
+
+
+
+==================
+Scalar function reference types: reject empty list
+:error
+==================
+
+define scalar function Z_BAD
+  with parameters p1: numeric with reference type []
+  returns abap.decfloat34;
+
+---
+
+
+
+==================
+Scalar function reference types: reject trailing list comma
+:error
+==================
+
+define scalar function Z_BAD
+  with parameters p1: numeric with reference type [#NONE,]
+  returns abap.decfloat34;
+
+---
+
+
+
+==================
+Scalar function reference types: reject CASE without WHEN
+:error
+==================
+
+define scalar function Z_BAD
+  returns abap.decfloat34 with reference type case else #NONE end;
+
+---
+
+
+
+==================
+Scalar function reference types: reject missing END
+:error
+==================
+
+define scalar function Z_BAD with parameters p1: numeric
+  returns abap.decfloat34 with reference type
+    case when p1: #NONE then #NONE else #NONE;
+
+---
+
+

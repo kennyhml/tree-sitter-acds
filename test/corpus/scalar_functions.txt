@@ -1,0 +1,355 @@
+==================
+Scalar functions without parameters and optional semicolon
+==================
+
+define scalar function current_label returns abap.string
+DEFINE SCALAR FUNCTION current_count RETURNS abap.int4;
+
+---
+
+(source_file
+  (scalar_function_definition
+    name: (identifier)
+    returns: (function_return_type
+      type: (scalar_typing
+        type: (builtin_type
+          name: (builtin_type_name)))))
+  (scalar_function_definition
+    name: (identifier)
+    returns: (function_return_type
+      type: (scalar_typing
+        type: (builtin_type
+          name: (builtin_type_name))))))
+
+==================
+Mixed-case keywords with namespaced scalar function and named return
+==================
+
+DeFiNe ScAlAr FuNcTiOn /DMO/customer_label
+  WiTh PaRaMeTeRs customer_id : AbAp.ChAr(10)
+  ReTuRnS /DMO/customer_name;
+
+---
+
+(source_file
+  (scalar_function_definition
+    name: (identifier)
+    parameters: (function_parameters
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (builtin_type
+            name: (builtin_type_name)
+            parameters: (type_parameters
+              length: (unsigned_integer))))))
+    returns: (function_return_type
+      type: (scalar_typing
+        type: (identifier)))))
+
+==================
+Scalar parameters with builtin, numeric generic, named and TYPE OF typing
+==================
+
+DEFINE SCALAR FUNCTION format_amount
+  WITH PARAMETERS item_count : abap.int4,
+                  label : abap.char(40),
+                  amount : abap.dec(15, 2),
+                  generic_amount : numeric,
+                  currency : /DMO/currency_code,
+                  other_amount : TYPE OF amount
+  RETURNS abap.string;
+
+---
+
+(source_file
+  (scalar_function_definition
+    name: (identifier)
+    parameters: (function_parameters
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (builtin_type
+            name: (builtin_type_name))))
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (builtin_type
+            name: (builtin_type_name)
+            parameters: (type_parameters
+              length: (unsigned_integer)))))
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (builtin_type
+            name: (builtin_type_name)
+            parameters: (type_parameters
+              length: (unsigned_integer)
+              decimals: (unsigned_integer)))))
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (identifier)))
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (identifier)))
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (type_of
+            parameter: (identifier)))))
+    returns: (function_return_type
+      type: (scalar_typing
+        type: (builtin_type
+          name: (builtin_type_name))))))
+
+==================
+Scalar return TYPE OF parameter with comments
+==================
+
+// Preserve the input type
+DEFINE /* scalar declaration */ SCALAR FUNCTION identity_value
+  WITH PARAMETERS input_value : numeric
+  RETURNS TYPE /* parameter reference */ OF input_value; // end declaration
+
+---
+
+(source_file
+  (line_comment)
+  (scalar_function_definition
+    (block_comment)
+    name: (identifier)
+    parameters: (function_parameters
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (identifier))))
+    returns: (function_return_type
+      type: (scalar_typing
+        type: (type_of
+          (block_comment)
+          parameter: (identifier)))))
+  (line_comment))
+
+==================
+Scalar and simple type statement boundaries with and without semicolons
+==================
+
+DEFINE SCALAR FUNCTION first_value RETURNS abap.int4
+DEFINE TYPE scalar_value : abap.int4;
+DEFINE SCALAR FUNCTION second_value
+  WITH PARAMETERS input_value : scalar_value
+  RETURNS TYPE OF input_value;
+DEFINE SCALAR FUNCTION third_value RETURNS scalar_value
+DEFINE TYPE final_value : scalar_value
+
+---
+
+(source_file
+  (scalar_function_definition
+    name: (identifier)
+    returns: (function_return_type
+      type: (scalar_typing
+        type: (builtin_type
+          name: (builtin_type_name)))))
+  (simple_type_definition
+    name: (identifier)
+    type: (builtin_type
+      name: (builtin_type_name)))
+  (scalar_function_definition
+    name: (identifier)
+    parameters: (function_parameters
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (identifier))))
+    returns: (function_return_type
+      type: (scalar_typing
+        type: (type_of
+          parameter: (identifier)))))
+  (scalar_function_definition
+    name: (identifier)
+    returns: (function_return_type
+      type: (scalar_typing
+        type: (identifier))))
+  (simple_type_definition
+    name: (identifier)
+    type: (identifier)))
+
+==================
+TYPE as a scalar parameter and return type name
+==================
+
+define type type : abap.int4;
+define scalar function named_type
+  with parameters value: type, other: TyPe
+  returns TYPE;
+
+---
+
+(source_file
+  (simple_type_definition
+    name: (identifier)
+    type: (builtin_type
+      name: (builtin_type_name)))
+  (scalar_function_definition
+    name: (identifier)
+    parameters: (function_parameters
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (identifier)))
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (identifier))))
+    returns: (function_return_type
+      type: (scalar_typing
+        type: (identifier)))))
+
+==================
+TYPE as a function name and TYPE OF parameter target
+==================
+
+define scalar function type
+  with parameters type: type, other: type of type
+  returns TyPe /* keyword or name */ Of type;
+
+---
+
+(source_file
+  (scalar_function_definition
+    name: (identifier)
+    parameters: (function_parameters
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (identifier)))
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (type_of
+            parameter: (identifier)))))
+    returns: (function_return_type
+      type: (scalar_typing
+        type: (type_of
+          (block_comment)
+          parameter: (identifier))))))
+
+==================
+Named TYPE with reference clauses and no declaration terminator
+==================
+
+define scalar function referenced_type
+  with parameters value: type with reference type [#NONE]
+  returns type with reference type of value
+define type alias_type : type;
+
+---
+
+(source_file
+  (scalar_function_definition
+    name: (identifier)
+    parameters: (function_parameters
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (identifier)
+          reference_type: (parameter_reference_type
+            type: (reference_types
+              (enum_literal
+                value: (enum_symbol)))))))
+    returns: (function_return_type
+      type: (scalar_typing
+        type: (identifier)
+        reference_type: (parameter_reference_type
+          type: (reference_type_of
+            parameter: (identifier))))))
+  (simple_type_definition
+    name: (identifier)
+    type: (identifier)))
+
+==================
+TYPE keyword does not split longer type names
+==================
+
+define scalar function prefixed_type
+  with parameters value: type_name, other: typeof
+  returns type2;
+
+---
+
+(source_file
+  (scalar_function_definition
+    name: (identifier)
+    parameters: (function_parameters
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (identifier)))
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (identifier))))
+    returns: (function_return_type
+      type: (scalar_typing
+        type: (identifier)))))
+
+==================
+Scalar TYPE OF requires a parameter target
+:error
+==================
+
+define scalar function missing_target returns type of;
+
+---
+
+==================
+Scalar function missing RETURNS
+:error
+==================
+
+DEFINE SCALAR FUNCTION missing_returns
+  WITH PARAMETERS input_value : abap.int4;
+
+---
+
+
+
+==================
+Scalar function with empty WITH PARAMETERS
+:error
+==================
+
+DEFINE SCALAR FUNCTION empty_parameters
+  WITH PARAMETERS
+  RETURNS abap.int4;
+
+---
+
+
+
+==================
+Scalar function with trailing parameter comma
+:error
+==================
+
+DEFINE SCALAR FUNCTION trailing_comma
+  WITH PARAMETERS input_value : abap.int4,
+  RETURNS abap.int4;
+
+---
+
+
+
+==================
+Scalar function parameter missing colon
+:error
+==================
+
+DEFINE SCALAR FUNCTION missing_colon
+  WITH PARAMETERS input_value abap.int4
+  RETURNS abap.int4;
+
+---
+
