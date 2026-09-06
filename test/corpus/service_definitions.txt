@@ -1,0 +1,156 @@
+==================
+Annotated service with provider contract and exposed entities
+==================
+
+@EndUserText.label: 'Flight service'
+DeFiNe SeRvIcE /DMO/flight_service
+  PrOvIdEr CoNtRaCtS ODATA_V4_UI
+{
+  ExPoSe /DMO/flight;
+  expose /DMO/booking as Bookings;
+  expose method_entity;
+}
+
+---
+
+(source_file
+  (service_definition
+    (annotation
+      name: (sub_annotation
+        parent: (identifier)
+        name: (identifier))
+      value: (string_literal))
+    name: (identifier)
+    contract: (provider_contracts
+      scenario: (identifier))
+    body: (exposed_service_objects
+      (exposed_entity
+        name: (identifier))
+      (exposed_entity
+        name: (identifier)
+        (alias
+          name: (identifier)))
+      (exposed_entity
+        name: (identifier)))))
+
+==================
+Service without DEFINE
+==================
+
+SERVICE method
+{
+  EXPOSE minimal_entity;
+}
+
+---
+
+(source_file
+  (service_definition
+    name: (identifier)
+    body: (exposed_service_objects
+      (exposed_entity
+        name: (identifier)))))
+
+==================
+Expose AMDP method
+==================
+
+define service /DMO/sql_service
+  provider contracts SQL
+{
+  expose method /DMO/CL_SQL_SERVICE=>GET_DATA as FlightData;
+}
+
+---
+
+(source_file
+  (service_definition
+    name: (identifier)
+    contract: (provider_contracts
+      scenario: (identifier))
+    body: (exposed_service_objects
+      (exposed_method
+        name: (method_qualifier
+          class: (identifier)
+          name: (identifier))
+        (alias
+          name: (identifier))))))
+
+==================
+Reject empty service body
+:error
+==================
+
+define service empty_service {}
+
+---
+
+
+
+==================
+Reject exposed entity without semicolon
+:error
+==================
+
+define service invalid_service
+{
+  expose entity_without_terminator
+}
+
+---
+
+
+
+==================
+Reject exposed method without alias
+:error
+==================
+
+define service invalid_service provider contracts SQL
+{
+  expose method CL_SQL_SERVICE=>GET_DATA;
+}
+
+---
+
+
+
+==================
+Reject provider contract without scenario
+:error
+==================
+
+define service invalid_service provider contracts
+{
+  expose valid_entity;
+}
+
+---
+
+
+
+==================
+Reject whitespace before method selector
+:error
+==================
+
+define service invalid_service provider contracts SQL
+{
+  expose method CL_SQL_SERVICE =>GET_DATA as FlightData;
+}
+
+---
+
+
+
+==================
+Reject whitespace after method selector
+:error
+==================
+
+define service invalid_service provider contracts SQL
+{
+  expose method CL_SQL_SERVICE=> GET_DATA as FlightData;
+}
+
+---

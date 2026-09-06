@@ -66,6 +66,32 @@
     ]
   },
   {
+    "type": "alias",
+    "named": true,
+    "fields": {
+      "keyword": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "as",
+            "named": false
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "annotation",
     "named": true,
     "fields": {
@@ -326,6 +352,101 @@
     }
   },
   {
+    "type": "exposed_entity",
+    "named": true,
+    "fields": {
+      "keyword": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "expose",
+            "named": false
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "alias",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "exposed_method",
+    "named": true,
+    "fields": {
+      "keyword": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "expose",
+            "named": false
+          },
+          {
+            "type": "method",
+            "named": false
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "method_qualifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "alias",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "exposed_service_objects",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "exposed_entity",
+          "named": true
+        },
+        {
+          "type": "exposed_method",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "function_parameter",
     "named": true,
     "fields": {
@@ -408,6 +529,32 @@
     }
   },
   {
+    "type": "method_qualifier",
+    "named": true,
+    "fields": {
+      "class": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "parameter_reference_type",
     "named": true,
     "fields": {
@@ -447,6 +594,36 @@
           },
           {
             "type": "reference_types",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "provider_contracts",
+    "named": true,
+    "fields": {
+      "keyword": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "contracts",
+            "named": false
+          },
+          {
+            "type": "provider",
+            "named": false
+          }
+        ]
+      },
+      "scenario": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
             "named": true
           }
         ]
@@ -743,6 +920,66 @@
     }
   },
   {
+    "type": "service_definition",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "exposed_service_objects",
+            "named": true
+          }
+        ]
+      },
+      "contract": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "provider_contracts",
+            "named": true
+          }
+        ]
+      },
+      "keyword": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "define",
+            "named": false
+          },
+          {
+            "type": "service",
+            "named": false
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "annotation",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "simple_type_definition",
     "named": true,
     "fields": {
@@ -811,6 +1048,10 @@
         },
         {
           "type": "scalar_function_definition",
+          "named": true
+        },
+        {
+          "type": "service_definition",
           "named": true
         },
         {
@@ -961,6 +1202,10 @@
     "named": false
   },
   {
+    "type": "=>",
+    "named": false
+  },
+  {
     "type": "@",
     "named": false
   },
@@ -985,12 +1230,20 @@
     "named": false
   },
   {
+    "type": "as",
+    "named": false
+  },
+  {
     "type": "block_comment",
     "named": true,
     "extra": true
   },
   {
     "type": "case",
+    "named": false
+  },
+  {
+    "type": "contracts",
     "named": false
   },
   {
@@ -1018,6 +1271,10 @@
     "named": true
   },
   {
+    "type": "expose",
+    "named": false
+  },
+  {
     "type": "function",
     "named": false
   },
@@ -1039,6 +1296,10 @@
     "extra": true
   },
   {
+    "type": "method",
+    "named": false
+  },
+  {
     "type": "null_literal",
     "named": true
   },
@@ -1048,6 +1309,10 @@
   },
   {
     "type": "parameters",
+    "named": false
+  },
+  {
+    "type": "provider",
     "named": false
   },
   {
@@ -1065,6 +1330,10 @@
   {
     "type": "scientific_literal",
     "named": true
+  },
+  {
+    "type": "service",
+    "named": false
   },
   {
     "type": "string_literal",

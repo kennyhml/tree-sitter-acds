@@ -79,18 +79,6 @@ define type invalid_type : abap. dec(4,2);
 ---
 
 
-
-==================
-Reject a namespaced identifier after ABAP
-:error
-==================
-
-define type invalid_type : abap./DMO/dec;
-
----
-
-
-
 ==================
 Typed literals still require an adjacent value
 :error

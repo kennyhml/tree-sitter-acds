@@ -8,14 +8,7 @@
 // @ts-check
 
 const STRING_LITERAL = /'([^'\\\r\n]|''|\\['\\])*'/;
-const ANNOTATION_IDENTIFIER = /[a-z][a-z0-9_]*/i;
-const IDENTIFIER = token(
-  choice(
-    prec(2, /[a-z_][a-z0-9_]{4,}/i), // prevent abap from splitting longer names
-    /[a-z_][a-z0-9_]*/i, // base case
-    /\/[a-z0-9_]+\/[a-z_][a-z0-9_]*/i, // namespaced
-  ),
-);
+const IDENTIFIER = /([a-z_][a-z0-9_]*)|(\/[a-z0-9_]+\/[a-z_][a-z0-9_]*)/i;
 
 export default grammar({
   name: "acds",
@@ -43,24 +36,9 @@ export default grammar({
           $.enum_type_definition,
           $.simple_type_definition,
           $.scalar_function_definition,
+          $.service_definition,
         ),
       ),
-
-    /*
-     * - A name must start with a letter, slash character, or underscore.
-     * - CDS keywords CANNOT be used as names
-     * - The separator for names with multiple parts is a period (.).
-     * - A name must have between 2 and 30 characters, but that is not of concern.
-     *
-     * Slashes need special namespace handling to make sure they dont clash with the
-     * division operator.
-     *
-     * @see https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENCDS_GENERAL_SYNTAX_RULES.html
-     */
-    identifier: (_) => IDENTIFIER,
-
-    _immediate_identifier: ($) =>
-      alias(token.immediate(IDENTIFIER), $.identifier),
 
     /*
      * This rule has no deeper meaning than solving a lexing issue when
@@ -465,6 +443,86 @@ export default grammar({
         ":",
         field("type", choice($.enum_literal, $.reference_type_of)),
       ),
+
+    /*
+     * [@service_annot1]
+     * [@service_annot2]
+     * ...
+     * [DEFINE] SERVICE service
+     * [PROVIDER CONTRACTS contract]
+     * {
+     *    EXPOSE cds_entity [AS alias];
+     *  / EXPOSE METHOD class_name=>method_name AS alias;
+     *    ...
+     * }
+     *
+     * @see https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENSRVD_DEFINE_SERVICE.html
+     */
+    service_definition: ($) =>
+      seq(
+        repeat($.annotation),
+        optional(kw("define")),
+        kw("service"),
+        field("name", $.identifier),
+        optional(field("contract", $.provider_contracts)),
+        field("body", $.exposed_service_objects),
+      ),
+
+    exposed_service_objects: ($) =>
+      seq("{", repeat1(choice($.exposed_entity, $.exposed_method)), "}"),
+
+    // EXPOSE cds_entity [AS alias];
+    exposed_entity: ($) =>
+      seq(kw("expose"), field("name", $.identifier), optional($.alias), ";"),
+
+    // EXPOSE METHOD class=>method AS alias;
+    exposed_method: ($) =>
+      seq(
+        ...kws("expose", "method"),
+        field("name", $.method_qualifier),
+        $.alias,
+        ";",
+      ),
+
+    alias: ($) => seq(kw("as"), field("name", $.identifier)),
+
+    method_qualifier: ($) =>
+      seq(
+        field("class", $.identifier),
+        token.immediate("=>"),
+        field("name", $._immediate_identifier),
+      ),
+
+    /*
+     * ... PROVIDER CONTRACTS INA | ODATA_V2_UI  ...
+     *
+     * The specific scenarion is simply parsed as identifier to be more
+     * permissive and not add constants going forward.
+     *
+     * @see https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENSRVD_PROVIDER_CONTRACT.html
+     */
+    provider_contracts: ($) =>
+      seq(...kws("provider", "contracts"), field("scenario", $.identifier)),
+
+    /*
+     * - A name must start with a letter, slash character, or underscore.
+     * - CDS keywords CANNOT be used as names
+     * - The separator for names with multiple parts is a period (.).
+     * - A name must have between 2 and 30 characters, but that is not of concern.
+     *
+     * Slashes need special namespace handling to make sure they dont clash with the
+     * division operator.
+     *
+     * NOTE: This rule must be at the bottom because thats how tree-sitter solves
+     * lexical conflicts between tokens of the same lengths (rule position). So
+     * that means prefer a keyword over an identifier.
+     *
+     * @see https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENCDS_GENERAL_SYNTAX_RULES.html
+     */
+    identifier: (_) => IDENTIFIER,
+
+    _immediate_identifier: ($) =>
+      alias(token.immediate(IDENTIFIER), $.identifier),
   },
 });
 

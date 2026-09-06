@@ -1,0 +1,35 @@
+@EndUserText.label: 'SQL service'
+DeFiNe SeRvIcE /DMO/sql_service
+// <- keyword
+//     ^ keyword
+//             ^ module
+  PrOvIdEr CoNtRaCtS SQL
+//^ keyword
+//         ^ keyword
+//                   ^ constant.builtin
+{
+// <- punctuation.bracket
+  ExPoSe /DMO/flight as Flights;
+//^ keyword
+//       ^ type
+//                   ^ keyword
+//                      ^ type
+  expose method /DMO/CL_FLIGHT=>GET_DATA as FlightData;
+//^ keyword
+//       ^ keyword
+//              ^ type
+//                            ^ operator
+//                              ^ function.method
+//                                       ^ keyword
+//                                          ^ function
+}
+// <- punctuation.bracket
+
+SeRvIcE method
+// <- keyword
+//      ^ module
+{
+  expose method_entity;
+//^ keyword
+//       ^ type
+}

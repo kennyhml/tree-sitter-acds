@@ -19,71 +19,13 @@
           {
             "type": "SYMBOL",
             "name": "scalar_function_definition"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "service_definition"
           }
         ]
       }
-    },
-    "identifier": {
-      "type": "TOKEN",
-      "content": {
-        "type": "CHOICE",
-        "members": [
-          {
-            "type": "PREC",
-            "value": 2,
-            "content": {
-              "type": "PATTERN",
-              "value": "[a-z_][a-z0-9_]{4,}",
-              "flags": "i"
-            }
-          },
-          {
-            "type": "PATTERN",
-            "value": "[a-z_][a-z0-9_]*",
-            "flags": "i"
-          },
-          {
-            "type": "PATTERN",
-            "value": "\\/[a-z0-9_]+\\/[a-z_][a-z0-9_]*",
-            "flags": "i"
-          }
-        ]
-      }
-    },
-    "_immediate_identifier": {
-      "type": "ALIAS",
-      "content": {
-        "type": "IMMEDIATE_TOKEN",
-        "content": {
-          "type": "TOKEN",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "PREC",
-                "value": 2,
-                "content": {
-                  "type": "PATTERN",
-                  "value": "[a-z_][a-z0-9_]{4,}",
-                  "flags": "i"
-                }
-              },
-              {
-                "type": "PATTERN",
-                "value": "[a-z_][a-z0-9_]*",
-                "flags": "i"
-              },
-              {
-                "type": "PATTERN",
-                "value": "\\/[a-z0-9_]+\\/[a-z_][a-z0-9_]*",
-                "flags": "i"
-              }
-            ]
-          }
-        }
-      },
-      "named": true,
-      "value": "identifier"
     },
     "_type_identifier": {
       "type": "CHOICE",
@@ -1653,6 +1595,321 @@
           }
         }
       ]
+    },
+    "service_definition": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "annotation"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "keyword",
+              "content": {
+                "type": "ALIAS",
+                "content": {
+                  "type": "PATTERN",
+                  "value": "define",
+                  "flags": "i"
+                },
+                "named": false,
+                "value": "define"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "FIELD",
+          "name": "keyword",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "PATTERN",
+              "value": "service",
+              "flags": "i"
+            },
+            "named": false,
+            "value": "service"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "contract",
+              "content": {
+                "type": "SYMBOL",
+                "name": "provider_contracts"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "FIELD",
+          "name": "body",
+          "content": {
+            "type": "SYMBOL",
+            "name": "exposed_service_objects"
+          }
+        }
+      ]
+    },
+    "exposed_service_objects": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "exposed_entity"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "exposed_method"
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
+    "exposed_entity": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "keyword",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "PATTERN",
+              "value": "expose",
+              "flags": "i"
+            },
+            "named": false,
+            "value": "expose"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "alias"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
+    "exposed_method": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "keyword",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "PATTERN",
+              "value": "expose",
+              "flags": "i"
+            },
+            "named": false,
+            "value": "expose"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "keyword",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "PATTERN",
+              "value": "method",
+              "flags": "i"
+            },
+            "named": false,
+            "value": "method"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "method_qualifier"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "alias"
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
+    "alias": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "keyword",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "PATTERN",
+              "value": "as",
+              "flags": "i"
+            },
+            "named": false,
+            "value": "as"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        }
+      ]
+    },
+    "method_qualifier": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "class",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "IMMEDIATE_TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "=>"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_immediate_identifier"
+          }
+        }
+      ]
+    },
+    "provider_contracts": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "keyword",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "PATTERN",
+              "value": "provider",
+              "flags": "i"
+            },
+            "named": false,
+            "value": "provider"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "keyword",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "PATTERN",
+              "value": "contracts",
+              "flags": "i"
+            },
+            "named": false,
+            "value": "contracts"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "scenario",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        }
+      ]
+    },
+    "identifier": {
+      "type": "PATTERN",
+      "value": "([a-z_][a-z0-9_]*)|(\\/[a-z0-9_]+\\/[a-z_][a-z0-9_]*)",
+      "flags": "i"
+    },
+    "_immediate_identifier": {
+      "type": "ALIAS",
+      "content": {
+        "type": "IMMEDIATE_TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "([a-z_][a-z0-9_]*)|(\\/[a-z0-9_]+\\/[a-z_][a-z0-9_]*)",
+          "flags": "i"
+        }
+      },
+      "named": true,
+      "value": "identifier"
     }
   },
   "extras": [
