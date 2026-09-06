@@ -19,9 +19,15 @@ include(GNUInstallDirs)
 
 find_program(TREE_SITTER_CLI tree-sitter DOC "Tree-sitter CLI")
 
+set(GRAMMAR_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/grammar.js"
+    "${CMAKE_CURRENT_SOURCE_DIR}/grammar/tdl.js"
+    "${CMAKE_CURRENT_SOURCE_DIR}/grammar/fdl.js"
+    "${CMAKE_CURRENT_SOURCE_DIR}/grammar/sdl.js")
+
 add_custom_command(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/src/grammar.json"
                           "${CMAKE_CURRENT_SOURCE_DIR}/src/node-types.json"
-                   DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/grammar.js"
+                   DEPENDS ${GRAMMAR_SOURCES}
                    COMMAND "${TREE_SITTER_CLI}" generate grammar.js --no-parser
                    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
                    COMMENT "Generating grammar.json")

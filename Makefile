@@ -4,6 +4,7 @@ VERSION := 0.1.0
 
 # repository
 SRC_DIR := src
+GRAMMAR_SOURCES := grammar.js $(wildcard grammar/*.js)
 
 TS ?= tree-sitter
 
@@ -72,8 +73,8 @@ $(LANGUAGE_NAME).pc: bindings/c/$(LANGUAGE_NAME).pc.in
 		-e 's|@PROJECT_HOMEPAGE_URL@|$(HOMEPAGE_URL)|' \
 		-e 's|@CMAKE_INSTALL_PREFIX@|$(PREFIX)|' $< > $@
 
-$(SRC_DIR)/grammar.json: grammar.js
-	$(TS) generate --no-parser $^
+$(SRC_DIR)/grammar.json: $(GRAMMAR_SOURCES)
+	$(TS) generate --no-parser grammar.js
 
 $(PARSER): $(SRC_DIR)/grammar.json
 	$(TS) generate $^

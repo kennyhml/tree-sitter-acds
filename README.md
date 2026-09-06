@@ -3,8 +3,8 @@ Tree-sitter grammar for ABAP CDS
 
 ## Development
 
-Regenerate the parser after editing `grammar.js`, then run the corpus and
-highlighting tests:
+Regenerate the parser after editing `grammar.js` or `grammar/*.js`, then run the
+corpus and highlighting tests:
 
 ```sh
 tree-sitter generate
