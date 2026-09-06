@@ -980,6 +980,50 @@
     }
   },
   {
+    "type": "service_extension",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "exposed_service_objects",
+            "named": true
+          }
+        ]
+      },
+      "keyword": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "extend",
+            "named": false
+          },
+          {
+            "type": "service",
+            "named": false
+          },
+          {
+            "type": "with",
+            "named": false
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "simple_type_definition",
     "named": true,
     "fields": {
@@ -1052,6 +1096,10 @@
         },
         {
           "type": "service_definition",
+          "named": true
+        },
+        {
+          "type": "service_extension",
           "named": true
         },
         {
@@ -1272,6 +1320,10 @@
   },
   {
     "type": "expose",
+    "named": false
+  },
+  {
+    "type": "extend",
     "named": false
   },
   {

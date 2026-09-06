@@ -33,3 +33,26 @@ SeRvIcE method
 //^ keyword
 //       ^ type
 }
+
+ExTeNd SeRvIcE /DMO/sql_service WiTh
+// <- keyword
+//     ^ keyword
+//             ^ module
+//                              ^ keyword
+{
+// <- punctuation.bracket
+  ExPoSe /DMO/airport as Airports;
+//^ keyword
+//       ^ type
+//                    ^ keyword
+//                       ^ type
+  expose method /DMO/CL_SERVICE=>GET_STATS as Statistics;
+//^ keyword
+//       ^ keyword
+//              ^ type
+//                             ^ operator
+//                               ^ function.method
+//                                         ^ keyword
+//                                            ^ function
+}
+// <- punctuation.bracket

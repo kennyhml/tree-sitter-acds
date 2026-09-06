@@ -77,6 +77,61 @@ define service /DMO/sql_service
           name: (identifier))))))
 
 ==================
+Extend service with exposed entities and method
+==================
+
+ExTeNd SeRvIcE /DMO/flight_service WiTh
+{
+  ExPoSe /DMO/airport;
+  expose /DMO/carrier as Carriers;
+  expose method /DMO/CL_SERVICE=>GET_STATS as Statistics;
+}
+
+---
+
+(source_file
+  (service_extension
+    name: (identifier)
+    body: (exposed_service_objects
+      (exposed_entity
+        name: (identifier))
+      (exposed_entity
+        name: (identifier)
+        (alias
+          name: (identifier)))
+      (exposed_method
+        name: (method_qualifier
+          class: (identifier)
+          name: (identifier))
+        (alias
+          name: (identifier))))))
+
+==================
+Reject service extension without WITH
+:error
+==================
+
+extend service invalid_extension
+{
+  expose valid_entity;
+}
+
+---
+
+
+
+==================
+Reject empty service extension body
+:error
+==================
+
+extend service empty_extension with {}
+
+---
+
+
+
+==================
 Reject empty service body
 :error
 ==================

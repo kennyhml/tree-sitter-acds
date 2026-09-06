@@ -5,6 +5,7 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
+/** @type {RuleBuilders<string, never>} */
 export const serviceDefinitionRules = {
   /*
    * [@service_annot1]
@@ -27,6 +28,25 @@ export const serviceDefinitionRules = {
       kw("service"),
       field("name", $.identifier),
       optional(field("contract", $.provider_contracts)),
+      field("body", $.exposed_service_objects),
+    ),
+
+  /*
+   * EXTEND SERVICE name
+   * WITH
+   * {
+   *    EXPOSE cds_entity [AS alias];
+   *  / EXPOSE METHOD class_name=>method_name AS alias;
+   *    ...
+   * }
+   *
+   * @see https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENSRVD_EXTEND_SERVICE.html
+   */
+  service_extension: ($) =>
+    seq(
+      ...kws("extend", "service"),
+      field("name", $.identifier),
+      kw("with"),
       field("body", $.exposed_service_objects),
     ),
 

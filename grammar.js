@@ -41,6 +41,7 @@ export default grammar({
           $.simple_type_definition,
           $.scalar_function_definition,
           $.service_definition,
+          $.service_extension,
         ),
       ),
 

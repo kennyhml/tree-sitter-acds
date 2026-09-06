@@ -23,6 +23,10 @@
           {
             "type": "SYMBOL",
             "name": "service_definition"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "service_extension"
           }
         ]
       }
@@ -1665,6 +1669,69 @@
               "type": "BLANK"
             }
           ]
+        },
+        {
+          "type": "FIELD",
+          "name": "body",
+          "content": {
+            "type": "SYMBOL",
+            "name": "exposed_service_objects"
+          }
+        }
+      ]
+    },
+    "service_extension": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "keyword",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "PATTERN",
+              "value": "extend",
+              "flags": "i"
+            },
+            "named": false,
+            "value": "extend"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "keyword",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "PATTERN",
+              "value": "service",
+              "flags": "i"
+            },
+            "named": false,
+            "value": "service"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "keyword",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "PATTERN",
+              "value": "with",
+              "flags": "i"
+            },
+            "named": false,
+            "value": "with"
+          }
         },
         {
           "type": "FIELD",

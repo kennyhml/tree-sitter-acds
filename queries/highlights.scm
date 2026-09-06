@@ -29,6 +29,7 @@
 
 ; Services
 (service_definition name: (identifier) @module)
+(service_extension name: (identifier) @module)
 (provider_contracts scenario: (identifier) @constant.builtin)
 (exposed_entity name: (identifier) @type)
 (exposed_entity (alias name: (identifier) @type))

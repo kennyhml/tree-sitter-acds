@@ -5,6 +5,7 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
+/** @type {RuleBuilders<string, never>} */
 export const typeDefinitionRules = {
   /*
    * [@type_annot1]
