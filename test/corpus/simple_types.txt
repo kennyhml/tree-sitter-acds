@@ -10,7 +10,7 @@ define type string_type : abap.string
   (simple_type_definition
     name: (identifier)
     type: (builtin_type
-      name: (builtin_type_name))))
+      name: (identifier))))
 
 ==================
 Built-in type with length
@@ -24,9 +24,9 @@ DEFINE TYPE description_type : ABAP.CHAR( 40 );
   (simple_type_definition
     name: (identifier)
     type: (builtin_type
-      name: (builtin_type_name)
+      name: (identifier)
       parameters: (type_parameters
-        length: (unsigned_integer)))))
+        length: (integer_literal)))))
 
 ==================
 Built-in type with length and decimals
@@ -40,10 +40,10 @@ Define Type amount_type : Abap.Curr(15, 2);
   (simple_type_definition
     name: (identifier)
     type: (builtin_type
-      name: (builtin_type_name)
+      name: (identifier)
       parameters: (type_parameters
-        length: (unsigned_integer)
-        decimals: (unsigned_integer)))))
+        length: (integer_literal)
+        decimals: (integer_literal)))))
 
 ==================
 Named type reference

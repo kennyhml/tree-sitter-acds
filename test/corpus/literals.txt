@@ -17,7 +17,7 @@ define type numeric_literals : abap.int4 enum
   (enum_type_definition
     name: (identifier)
     base_type: (builtin_type
-      name: (builtin_type_name))
+      name: (identifier))
     body: (enum_body
       (enum_constant_definition
         name: (identifier)
@@ -53,9 +53,9 @@ define type character_literals : abap.char(8) enum
   (enum_type_definition
     name: (identifier)
     base_type: (builtin_type
-      name: (builtin_type_name)
+      name: (identifier)
       parameters: (type_parameters
-        length: (unsigned_integer)))
+        length: (integer_literal)))
     body: (enum_body
       (enum_constant_definition
         name: (identifier)
@@ -87,9 +87,9 @@ define type typed_literals : abap.char(8) enum
   (enum_type_definition
     name: (identifier)
     base_type: (builtin_type
-      name: (builtin_type_name)
+      name: (identifier)
       parameters: (type_parameters
-        length: (unsigned_integer)))
+        length: (integer_literal)))
     body: (enum_body
       (enum_constant_definition
         name: (identifier)
@@ -97,12 +97,14 @@ define type typed_literals : abap.char(8) enum
       (enum_constant_definition
         name: (identifier)
         value: (typed_literal
-          type: (builtin_type_name)
+          type: (builtin_type
+            name: (identifier))
           value: (string_literal)))
       (enum_constant_definition
         name: (identifier)
         value: (typed_literal
-          type: (builtin_type_name)
+          type: (builtin_type
+            name: (identifier))
           value: (string_literal))))))
 
 ==================
@@ -122,7 +124,7 @@ define type invalid_literal : abap.char(8) enum
   (enum_type_definition
     name: (identifier)
     base_type: (builtin_type
-      name: (builtin_type_name)
+      name: (identifier)
       parameters: (type_parameters
         length: (unsigned_integer)))
     body: (enum_body

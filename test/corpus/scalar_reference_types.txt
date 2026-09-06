@@ -30,7 +30,7 @@ define scalar function Z_STATIC
     returns: (function_return_type
       type: (scalar_typing
         type: (builtin_type
-          name: (builtin_type_name))
+          name: (identifier))
         reference_type: (parameter_reference_type
           type: (enum_literal
             value: (enum_symbol)))))))
@@ -116,7 +116,7 @@ define scalar function Z_MIXED
     returns: (function_return_type
       type: (scalar_typing
         type: (builtin_type
-          name: (builtin_type_name))))))
+          name: (identifier))))))
 
 ==================
 Scalar function reference types: SAP dynamic return example
@@ -172,10 +172,10 @@ define scalar function DEMO_CDS_SCALAR_REF_CASE
         name: (identifier)
         type: (scalar_typing
           type: (builtin_type
-            name: (builtin_type_name)
+            name: (identifier)
             parameters: (type_parameters
-              length: (unsigned_integer)
-              decimals: (unsigned_integer)))
+              length: (integer_literal)
+              decimals: (integer_literal)))
           reference_type: (parameter_reference_type
             type: (reference_types
               (enum_literal
@@ -189,10 +189,10 @@ define scalar function DEMO_CDS_SCALAR_REF_CASE
     returns: (function_return_type
       type: (scalar_typing
         type: (builtin_type
-          name: (builtin_type_name)
+          name: (identifier)
           parameters: (type_parameters
-            length: (unsigned_integer)
-            decimals: (unsigned_integer)))
+            length: (integer_literal)
+            decimals: (integer_literal)))
         reference_type: (parameter_reference_type
           type: (reference_type_case
             (reference_type_when_clause
@@ -254,7 +254,7 @@ DEFINE SCALAR FUNCTION Z_BRANCHES
     returns: (function_return_type
       type: (scalar_typing
         type: (builtin_type
-          name: (builtin_type_name))
+          name: (identifier))
         reference_type: (parameter_reference_type
           type: (reference_type_case
             (reference_type_when_clause
@@ -326,14 +326,14 @@ Define Scalar Function Z_INPUT_CASE
         name: (identifier)
         type: (scalar_typing
           type: (builtin_type
-            name: (builtin_type_name)
+            name: (identifier)
             parameters: (type_parameters
-              length: (unsigned_integer)
-              decimals: (unsigned_integer))))))
+              length: (integer_literal)
+              decimals: (integer_literal))))))
     returns: (function_return_type
       type: (scalar_typing
         type: (builtin_type
-          name: (builtin_type_name))))))
+          name: (identifier))))))
 
 ==================
 Scalar function reference types: reject missing AND

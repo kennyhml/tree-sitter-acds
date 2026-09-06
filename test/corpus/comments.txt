@@ -14,7 +14,7 @@ type comment_type : abap.string; // trailing comment
     (line_comment)
     name: (identifier)
     type: (builtin_type
-      name: (builtin_type_name)))
+      name: (identifier)))
   (line_comment))
 
 ==================
@@ -33,10 +33,10 @@ define/* between keywords */type block_type : abap.char(/* length */ 10)/* befor
     (block_comment)
     name: (identifier)
     type: (builtin_type
-      name: (builtin_type_name)
+      name: (identifier)
       parameters: (type_parameters
         (block_comment)
-        length: (unsigned_integer)))
+        length: (integer_literal)))
     (block_comment)))
 
 ==================
@@ -55,9 +55,9 @@ define type comment_markers : abap.char(30) enum
   (enum_type_definition
     name: (identifier)
     base_type: (builtin_type
-      name: (builtin_type_name)
+      name: (identifier)
       parameters: (type_parameters
-        length: (unsigned_integer)))
+        length: (integer_literal)))
     body: (enum_body
       (enum_constant_definition
         name: (identifier)

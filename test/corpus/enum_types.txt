@@ -15,7 +15,7 @@ define type weekday_type : abap.int1 enum
   (enum_type_definition
     name: (identifier)
     base_type: (builtin_type
-      name: (builtin_type_name))
+      name: (identifier))
     body: (enum_body
       (enum_constant_definition
         name: (identifier)
@@ -43,9 +43,9 @@ DEFINE TYPE boolean_type : ABAP.CHAR(1) ENUM
   (enum_type_definition
     name: (identifier)
     base_type: (builtin_type
-      name: (builtin_type_name)
+      name: (identifier)
       parameters: (type_parameters
-        length: (unsigned_integer)))
+        length: (integer_literal)))
     body: (enum_body
       (enum_constant_definition
         name: (identifier)
@@ -94,7 +94,7 @@ define type /DMO/status_type : abap.int2 enum
   (enum_type_definition
     name: (identifier)
     base_type: (builtin_type
-      name: (builtin_type_name))
+      name: (identifier))
     body: (enum_body
       (enum_constant_definition
         name: (identifier)

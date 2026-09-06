@@ -7,45 +7,15 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
-const RESERVED_KEYWORDS = [
-  /all/i,
-  /and/i,
-  /as/i,
-  /association/i,
-  /avg/i,
-  /case/i,
-  /cast/i,
-  /count/i,
-  /cross/i,
-  /distinct/i,
-  /exists/i,
-  /extend/i,
-  /from/i,
-  /full/i,
-  /group/i,
-  /having/i,
-  /inner/i,
-  /join/i,
-  /key/i,
-  /left/i,
-  /max/i,
-  /min/i,
-  /not/i,
-  /null/i,
-  /on/i,
-  /or/i,
-  /order/i,
-  /right/i,
-  /select/i,
-  /sum/i,
-  /union/i,
-  /view/i,
-  /when/i,
-  /where/i,
-];
-
 const STRING_LITERAL = /'([^'\\\r\n]|''|\\['\\])*'/;
 const ANNOTATION_IDENTIFIER = /[a-z][a-z0-9_]*/i;
+const IDENTIFIER = token(
+  choice(
+    prec(2, /[a-z_][a-z0-9_]{4,}/i), // prevent abap from splitting longer names
+    /[a-z_][a-z0-9_]*/i, // base case
+    /\/[a-z0-9_]+\/[a-z_][a-z0-9_]*/i, // namespaced
+  ),
+);
 
 export default grammar({
   name: "acds",
@@ -56,8 +26,14 @@ export default grammar({
 
   supertypes: ($) => [$.literal, $.untyped_literal, $.annotation_value],
 
+  /*
+   * CDS does reserve a handful of keywords, but unfortunately not all of them.
+   *
+   * So the annoying lexing conflicts still need extra handling - just like in
+   * the core ABAP grammar..
+   */
   reserved: {
-    global: (_) => RESERVED_KEYWORDS,
+    global: (_) => [/and/i],
   },
 
   rules: {
@@ -67,15 +43,8 @@ export default grammar({
           $.enum_type_definition,
           $.simple_type_definition,
           $.scalar_function_definition,
-          ...RESERVED_KEYWORDS,
         ),
       ),
-
-    // Two forward slashes (//) introduce a comment, which continues until the end of the line.
-    line_comment: (_) => token(seq("//", /[^\r\n]*/)),
-
-    // Comments within lines or that span multiple lines are enclosed by the characters /* and */.
-    block_comment: (_) => token(seq("/*", /[^*]*\*+([^/*][^*]*\*+)*/, "/")),
 
     /*
      * - A name must start with a letter, slash character, or underscore.
@@ -88,16 +57,38 @@ export default grammar({
      *
      * @see https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENCDS_GENERAL_SYNTAX_RULES.html
      */
-    identifier: (_) =>
-      token(
-        choice(
-          /[a-z_][a-z0-9_]*/i, // base case
-          /\/[a-z0-9_]+\/[a-z_][a-z0-9_]*/i, // namespaced
-        ),
-      ),
+    identifier: (_) => IDENTIFIER,
+
+    _immediate_identifier: ($) =>
+      alias(token.immediate(IDENTIFIER), $.identifier),
+
+    /*
+     * This rule has no deeper meaning than solving a lexing issue when
+     * the typename itself is `abap`, at which point the lexer wants to
+     * choose the builtin type path.
+     *
+     * It is not designed to be used in highlighting queries.
+     */
+    _type_identifier: ($) =>
+      choice($.identifier, alias(token(prec(1, /abap/i)), $.identifier)),
+
+    // Enumeration symbols #SYMBOL
+    enum_literal: ($) => seq("#", field("value", $.enum_symbol)),
+
+    enum_symbol: (_) => token.immediate(/[a-z][a-z0-9_]*/i),
+
+    // Two forward slashes (//) introduce a comment, which continues until the end of the line.
+    line_comment: (_) => token(seq("//", /[^\r\n]*/)),
+
+    // Comments within lines or that span multiple lines are enclosed by the characters /* and */.
+    block_comment: (_) => token(seq("/*", /[^*]*\*+([^/*][^*]*\*+)*/, "/")),
 
     literal: ($) => choice($.untyped_literal, $.typed_literal),
 
+    /*
+     * An untyped numeric literal can be prefixed directly by a sign. A decimal
+     * point, when present, must follow at least one digit.
+     */
     untyped_literal: ($) =>
       choice(
         $.integer_literal,
@@ -114,17 +105,13 @@ export default grammar({
      */
     typed_literal: ($) =>
       seq(
-        field("type", $.builtin_type_name),
+        field("type", alias($._builtin_type_path, $.builtin_type)),
         field(
           "value",
           alias(token.immediate(STRING_LITERAL), $.string_literal),
         ),
       ),
 
-    /*
-     * An untyped numeric literal can be prefixed directly by a sign. A decimal
-     * point, when present, must follow at least one digit.
-     */
     integer_literal: (_) => /[+-]?[0-9]+/,
 
     decimal_literal: (_) => /[+-]?[0-9]+\.[0-9]+/,
@@ -148,21 +135,28 @@ export default grammar({
      */
     builtin_type: ($) =>
       seq(
-        field("name", $.builtin_type_name),
+        $._builtin_type_path,
         optional(field("parameters", $.type_parameters)),
       ),
 
-    builtin_type_name: (_) => token(/abap\.[a-z_][a-z0-9_]*/i),
+    /*
+     * The `abap.type` path expression. `abap` and `type` are treated as
+     * separate tokens, such that the dot does not become part of it.
+     */
+    _builtin_type_path: ($) =>
+      seq(
+        alias(token(prec(1, /abap/i)), "abap"), // keep this anonymous
+        token.immediate("."),
+        field("name", $._immediate_identifier),
+      ),
 
     type_parameters: ($) =>
       seq(
         "(",
-        field("length", $.unsigned_integer),
-        optional(seq(",", field("decimals", $.unsigned_integer))),
+        field("length", $.integer_literal),
+        optional(seq(",", field("decimals", $.integer_literal))),
         ")",
       ),
-
-    unsigned_integer: (_) => /[0-9]+/,
 
     /*
      * @[<]Anno[:value]
@@ -176,38 +170,18 @@ export default grammar({
       seq(
         // @< places an annotation after a list element instead of before it.
         choice("@<", "@"),
-        field(
-          "name",
-          choice(
-            alias($._annotation_identifier, $.identifier),
-            $.sub_annotation,
-          ),
-        ),
+        field("name", choice($.identifier, $.sub_annotation)),
         optional(seq(":", field("value", $.annotation_value))),
       ),
 
     sub_annotation: ($) =>
       prec.left(
         seq(
-          field(
-            "parent",
-            choice(
-              alias($._annotation_identifier, $.identifier),
-              $.sub_annotation,
-            ),
-          ),
+          field("parent", choice($.identifier, $.sub_annotation)),
           token.immediate("."),
-          field(
-            "name",
-            alias($._immediate_annotation_identifier, $.identifier),
-          ),
+          field("name", $._immediate_identifier),
         ),
       ),
-
-    _annotation_identifier: (_) => token(ANNOTATION_IDENTIFIER),
-
-    _immediate_annotation_identifier: (_) =>
-      token.immediate(ANNOTATION_IDENTIFIER),
 
     /*
      * ... literal
@@ -233,6 +207,7 @@ export default grammar({
      * [ ...  value1 |{subannos1},
      *        value2 |{subannos2},
      *        ...
+     *
      * @see https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENCDS_ANNOTATIONS_SYNTAX_ARRAY.html
      */
     annotation_array: ($) =>
@@ -243,20 +218,9 @@ export default grammar({
 
     annotation_property: ($) =>
       seq(
-        field(
-          "name",
-          choice(
-            alias($._annotation_identifier, $.identifier),
-            $.sub_annotation,
-          ),
-        ),
+        field("name", choice($.identifier, $.sub_annotation)),
         optional(seq(":", field("value", $.annotation_value))),
       ),
-
-    // Enumeration symbols #SYMBOL
-    enum_literal: ($) => seq("#", field("value", $.enum_symbol)),
-
-    enum_symbol: (_) => token.immediate(/[a-z][a-z0-9_]*/i),
 
     // Boolean values are case-insensitive and can also be quoted as strings.
     boolean_literal: (_) => choice(/true/i, /false/i),
@@ -279,11 +243,10 @@ export default grammar({
     simple_type_definition: ($) =>
       seq(
         repeat($.annotation),
-        /define/i,
-        /type/i,
+        ...kws("define", "type"),
         field("name", $.identifier),
         ":",
-        field("type", choice($.builtin_type, $.identifier)),
+        field("type", choice($.builtin_type, $._type_identifier)),
         optional(";"),
       ),
 
@@ -309,12 +272,11 @@ export default grammar({
     enum_type_definition: ($) =>
       seq(
         repeat($.annotation),
-        /define/i,
-        /type/i,
+        ...kws("define", "type"),
         field("name", $.identifier),
         ":",
-        field("base_type", choice($.builtin_type, $.identifier)),
-        /enum/i,
+        field("base_type", choice($.builtin_type, $._type_identifier)),
+        kw("enum"),
         field("body", $.enum_body),
       ),
 
@@ -343,9 +305,7 @@ export default grammar({
      */
     scalar_function_definition: ($) =>
       seq(
-        /define/i,
-        /scalar/i,
-        /function/i,
+        ...kws("define", "scalar", "function"),
         field("name", $.identifier),
         optional(field("parameters", $.function_parameters)),
         field("returns", $.function_return_type),
@@ -353,7 +313,7 @@ export default grammar({
       ),
 
     function_return_type: ($) =>
-      seq(/returns/i, field("type", $.scalar_typing)),
+      seq(kw("returns"), field("type", $.scalar_typing)),
 
     /*
      * ... [WITH PARAMETERS pname1 : typing
@@ -364,7 +324,7 @@ export default grammar({
      * the parameters that is not worth being permissive over - just adds ambiguity.
      */
     function_parameters: ($) =>
-      seq(/with/i, /parameters/i, commaSep1($.function_parameter)),
+      seq(...kws("with", "parameters"), commaSep1($.function_parameter)),
 
     /*
      * ... [@parameter_annot1]
@@ -381,7 +341,7 @@ export default grammar({
       seq(
         field("name", $.identifier),
         ":",
-        choice($.identifier, $.builtin_type),
+        choice($._type_identifier, $.builtin_type),
       ),
 
     function_parameter: ($) =>
@@ -401,7 +361,7 @@ export default grammar({
         field(
           "type",
           choice(
-            $.identifier,
+            $._type_identifier,
             alias(token(prec(1, /type/i)), $.identifier), // conflict with TYPE OF ...
             $.builtin_type,
             $.type_of,
@@ -411,7 +371,11 @@ export default grammar({
       ),
 
     type_of: ($) =>
-      seq(token(prec(1, /type/i)), /of/i, field("parameter", $.identifier)),
+      seq(
+        alias(token(prec(1, /type/i)), "type"),
+        kw("of"),
+        field("parameter", $.identifier),
+      ),
 
     /*
      * 1. Static Reference Type Specification
@@ -434,20 +398,18 @@ export default grammar({
     parameter_reference_type: ($) =>
       choice(
         seq(
-          /with/i,
-          /reference/i,
-          /type/i,
+          ...kws("with", "reference", "type"),
           field(
             "type",
             choice($.enum_literal, $.reference_types, $.reference_type_case),
           ),
         ),
-        seq(/with/i, field("type", $.reference_type_of)),
+        seq(kw("with"), field("type", $.reference_type_of)),
       ),
 
     // ... REFERENCE TYPE OF pname ...
     reference_type_of: ($) =>
-      seq(/reference/i, /type/i, /of/i, field("parameter", $.identifier)),
+      seq(...kws("reference", "type", "of"), field("parameter", $.identifier)),
 
     // ... [ #CUKY, #UNIT, #CALC, ... ] ...
     reference_types: ($) =>
@@ -466,15 +428,15 @@ export default grammar({
      */
     reference_type_case: ($) =>
       seq(
-        /case/i,
+        kw("case"),
         repeat1($.reference_type_when_clause),
         optional(
           seq(
-            /else/i,
+            kw("else"),
             field("else", choice($.enum_literal, $.reference_type_of)),
           ),
         ),
-        /end/i,
+        kw("end"),
       ),
 
     /*
@@ -483,9 +445,9 @@ export default grammar({
      */
     reference_type_when_clause: ($) =>
       seq(
-        /when/i,
+        kw("when"),
         field("condition", $.reference_type_condition),
-        /then/i,
+        kw("then"),
         field("consequence", choice($.enum_literal, $.reference_type_of)),
       ),
 
@@ -493,7 +455,7 @@ export default grammar({
     reference_type_condition: ($) =>
       seq(
         $.reference_type_constraint,
-        repeat(seq(/and/i, $.reference_type_constraint)),
+        repeat(seq(kw("and"), $.reference_type_constraint)),
       ),
 
     // ...pname1: { reference / reference type of pname } ...
@@ -505,6 +467,24 @@ export default grammar({
       ),
   },
 });
+
+/**
+ * Expose case-insensitive keywords as queryable anonymous tokens.
+ *
+ * The keyword is tagged with a field to blanket highlight them.
+ *
+ * @param {string} word
+ */
+function kw(word) {
+  return field("keyword", alias(new RegExp(word, "i"), word));
+}
+
+/**
+ * @param {string[]} words
+ */
+function kws(...words) {
+  return words.map(kw);
+}
 
 /**
  * @param {RuleOrLiteral} rule

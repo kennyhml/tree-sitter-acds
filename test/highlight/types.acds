@@ -1,0 +1,50 @@
+DeFiNe TyPe /DMO/amount : AbAp.DeC(15, 2);
+// <- keyword
+//     ^ keyword
+//          ^ type
+//                      ^ punctuation.delimiter
+//                        ^ module
+//                            ^ punctuation.delimiter
+//                             ^ type.builtin
+//                                ^ punctuation.bracket
+//                                 ^ number
+//                                   ^ punctuation.delimiter
+//                                     ^ number
+//                                      ^ punctuation.bracket
+//                                       ^ punctuation.delimiter
+
+define type amount_alias : /DMO/amount;
+//          ^ type
+//                         ^ type
+
+define type literals : amount_alias EnUm
+//          ^ type
+//                     ^ type
+//                                  ^ keyword
+{
+// <- punctuation.bracket
+  Empty = InItIaL;
+  // <- constant
+//      ^ operator
+//        ^ keyword
+  IntVal = -2;
+//         ^ number
+  DecVal = -0.5;
+//         ^ number
+  SciVal = +1.25E-4;
+//         ^ number
+  StrVal = 'define type enum initial true null';
+//          ^ string
+  DateVal = AbAp.DaTs'20200101';
+//          ^ module
+//              ^ punctuation.delimiter
+//               ^ type.builtin
+//                   ^ string
+}
+// <- punctuation.bracket
+
+define scalar function abap returns abap;
+//                     ^ function
+//                     ^ !module
+//                                  ^ type
+//                                  ^ !module

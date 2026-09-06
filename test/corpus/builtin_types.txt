@@ -1,0 +1,120 @@
+==================
+ABAP namespace and builtin type name
+==================
+
+define type amount : AbAp.DeC(4,2);
+
+---
+
+(source_file
+  (simple_type_definition
+    name: (identifier)
+    type: (builtin_type
+      name: (identifier)
+      parameters: (type_parameters
+        length: (integer_literal)
+        decimals: (integer_literal)))))
+
+==================
+ABAP remains a valid name and named type
+==================
+
+define type abap : abap.int4;
+define type alias_type : ABAP;
+define type values_type : abap enum { Empty = initial; }
+define scalar function abap
+  with parameters abap: AbAp, value: abap_type
+  returns abap;
+
+---
+
+(source_file
+  (simple_type_definition
+    name: (identifier)
+    type: (builtin_type
+      name: (identifier)))
+  (simple_type_definition
+    name: (identifier)
+    type: (identifier))
+  (enum_type_definition
+    name: (identifier)
+    base_type: (identifier)
+    body: (enum_body
+      (enum_constant_definition
+        name: (identifier)
+        value: (initial))))
+  (scalar_function_definition
+    name: (identifier)
+    parameters: (function_parameters
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (identifier)))
+      (function_parameter
+        name: (identifier)
+        type: (scalar_typing
+          type: (identifier))))
+    returns: (function_return_type
+      type: (scalar_typing
+        type: (identifier)))))
+
+==================
+Reject whitespace before builtin type dot
+:error
+==================
+
+define type invalid_type : abap .dec(4,2);
+
+---
+
+
+
+==================
+Reject whitespace after builtin type dot
+:error
+==================
+
+define type invalid_type : abap. dec(4,2);
+
+---
+
+
+
+==================
+Reject a namespaced identifier after ABAP
+:error
+==================
+
+define type invalid_type : abap./DMO/dec;
+
+---
+
+
+
+==================
+Typed literals still require an adjacent value
+:error
+==================
+
+define type invalid_type : abap.dats enum
+{
+  Invalid = abap.dats '20200101';
+}
+
+---
+
+
+
+==================
+Typed literal type cannot have parameters
+:error
+==================
+
+define type invalid_type : abap.char(8) enum
+{
+  Invalid = abap.char(8)'text';
+}
+
+---
+
+

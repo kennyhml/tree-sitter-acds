@@ -1,0 +1,42 @@
+@Demo.settings: [
+// <- attribute
+ // <- attribute
+//   ^ punctuation.delimiter
+//    ^ attribute
+//              ^ punctuation.bracket
+  {
+  // <- punctuation.bracket
+    flags.enabled: [TrUe, false, NuLl],
+    // <- property
+//       ^ punctuation.delimiter
+//        ^ property
+//                  ^ constant.builtin
+//                        ^ constant.builtin
+//                               ^ constant.builtin
+    mode: #ACTIVE,
+    // <- property
+//        ^ constant
+//         ^ constant
+    label: '// not a comment /* neither */',
+//          ^ string
+    nested: [{ leaf: 'ENUM' }]
+  }
+]
+// <- punctuation.bracket
+@Marker
+ // <- attribute
+define type annotated_status : abap.int1 enum
+{
+  FIRST = initial;
+  @<Demo.after
+  // <- attribute
+//  ^ attribute
+  SECOND = 1;
+}
+
+// A real line comment containing @Demo and 'false'
+// <- comment
+/* A real multiline comment
+   containing define type and #ACTIVE
+*/
+// <- comment

@@ -42,9 +42,9 @@ define type status_text : abap.char(20);
         name: (identifier)))
     name: (identifier)
     type: (builtin_type
-      name: (builtin_type_name)
+      name: (identifier)
       parameters: (type_parameters
-        length: (unsigned_integer)))))
+        length: (integer_literal)))))
 
 ==================
 Nested arrays and structures
@@ -89,10 +89,10 @@ define type annotated_number : abap.dec(10, 4);
                   value: (enum_symbol))))))))
     name: (identifier)
     type: (builtin_type
-      name: (builtin_type_name)
+      name: (identifier)
       parameters: (type_parameters
-        length: (unsigned_integer)
-        decimals: (unsigned_integer)))))
+        length: (integer_literal)
+        decimals: (integer_literal)))))
 
 ==================
 Enum and enum constant annotations
@@ -118,7 +118,7 @@ define type weekday : abap.int1 enum
       value: (string_literal))
     name: (identifier)
     base_type: (builtin_type
-      name: (builtin_type_name))
+      name: (identifier))
     body: (enum_body
       (enum_constant_definition
         (annotation

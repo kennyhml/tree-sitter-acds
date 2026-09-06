@@ -13,13 +13,13 @@ DEFINE SCALAR FUNCTION current_count RETURNS abap.int4;
     returns: (function_return_type
       type: (scalar_typing
         type: (builtin_type
-          name: (builtin_type_name)))))
+          name: (identifier)))))
   (scalar_function_definition
     name: (identifier)
     returns: (function_return_type
       type: (scalar_typing
         type: (builtin_type
-          name: (builtin_type_name))))))
+          name: (identifier))))))
 
 ==================
 Mixed-case keywords with namespaced scalar function and named return
@@ -39,9 +39,9 @@ DeFiNe ScAlAr FuNcTiOn /DMO/customer_label
         name: (identifier)
         type: (scalar_typing
           type: (builtin_type
-            name: (builtin_type_name)
+            name: (identifier)
             parameters: (type_parameters
-              length: (unsigned_integer))))))
+              length: (integer_literal))))))
     returns: (function_return_type
       type: (scalar_typing
         type: (identifier)))))
@@ -69,22 +69,22 @@ DEFINE SCALAR FUNCTION format_amount
         name: (identifier)
         type: (scalar_typing
           type: (builtin_type
-            name: (builtin_type_name))))
+            name: (identifier))))
       (function_parameter
         name: (identifier)
         type: (scalar_typing
           type: (builtin_type
-            name: (builtin_type_name)
+            name: (identifier)
             parameters: (type_parameters
-              length: (unsigned_integer)))))
+              length: (integer_literal)))))
       (function_parameter
         name: (identifier)
         type: (scalar_typing
           type: (builtin_type
-            name: (builtin_type_name)
+            name: (identifier)
             parameters: (type_parameters
-              length: (unsigned_integer)
-              decimals: (unsigned_integer)))))
+              length: (integer_literal)
+              decimals: (integer_literal)))))
       (function_parameter
         name: (identifier)
         type: (scalar_typing
@@ -101,7 +101,7 @@ DEFINE SCALAR FUNCTION format_amount
     returns: (function_return_type
       type: (scalar_typing
         type: (builtin_type
-          name: (builtin_type_name))))))
+          name: (identifier))))))
 
 ==================
 Scalar return TYPE OF parameter with comments
@@ -151,11 +151,11 @@ DEFINE TYPE final_value : scalar_value
     returns: (function_return_type
       type: (scalar_typing
         type: (builtin_type
-          name: (builtin_type_name)))))
+          name: (identifier)))))
   (simple_type_definition
     name: (identifier)
     type: (builtin_type
-      name: (builtin_type_name)))
+      name: (identifier)))
   (scalar_function_definition
     name: (identifier)
     parameters: (function_parameters
@@ -191,7 +191,7 @@ define scalar function named_type
   (simple_type_definition
     name: (identifier)
     type: (builtin_type
-      name: (builtin_type_name)))
+      name: (identifier)))
   (scalar_function_definition
     name: (identifier)
     parameters: (function_parameters
@@ -304,6 +304,8 @@ define scalar function missing_target returns type of;
 
 ---
 
+
+
 ==================
 Scalar function missing RETURNS
 :error
@@ -352,4 +354,5 @@ DEFINE SCALAR FUNCTION missing_colon
   RETURNS abap.int4;
 
 ---
+
 

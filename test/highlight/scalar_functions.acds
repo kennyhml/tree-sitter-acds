@@ -1,0 +1,84 @@
+define scalar function type returns type;
+//                     ^ function
+//                     ^ !keyword
+//                                  ^ type
+//                                  ^ !keyword
+
+DeFiNe ScAlAr FuNcTiOn /DMO/ratio
+// <- keyword
+//     ^ keyword
+//            ^ keyword
+//                     ^ function
+  WiTh PaRaMeTeRs
+//^ keyword
+//     ^ keyword
+    type: numeric with reference type [#CUKY, #NONE],
+//  ^ variable.parameter
+//  ^ !keyword
+//      ^ punctuation.delimiter
+//        ^ type
+//                ^ keyword
+//                     ^ keyword
+//                               ^ keyword
+//                                    ^ punctuation.bracket
+//                                     ^ constant
+//                                          ^ punctuation.delimiter
+//                                            ^ constant
+    other: TyPe /* use a type named TYPE */,
+//  ^ variable.parameter
+//         ^ type
+//         ^ !keyword
+//              ^ comment
+    copy: TYPE OF type with reference type of type,
+//  ^ variable.parameter
+//        ^ keyword
+//             ^ keyword
+//                ^ variable.parameter
+//                ^ !keyword
+//                     ^ keyword
+//                          ^ keyword
+//                                    ^ keyword
+//                                         ^ keyword
+//                                            ^ variable.parameter
+    mixed: numeric with reference type [#UNIT, reference type of type]
+//                                             ^ keyword
+//                                                       ^ keyword
+//                                                            ^ keyword
+//                                                               ^ variable.parameter
+  ReTuRnS abap.dec(4,2) with reference type
+//^ keyword
+//        ^ module
+//            ^ punctuation.delimiter
+//             ^ type.builtin
+//                ^ punctuation.bracket
+//                 ^ number
+//                  ^ punctuation.delimiter
+//                   ^ number
+//                    ^ punctuation.bracket
+    CaSe
+//  ^ keyword
+      WhEn type: #CUKY AnD copy: reference type of type
+//    ^ keyword
+//         ^ variable.parameter
+//             ^ punctuation.delimiter
+//               ^ constant
+//                     ^ keyword
+//                         ^ variable.parameter
+//                               ^ keyword
+        ThEn #NONE
+//      ^ keyword
+//           ^ constant
+      WhEn type: #UNIT ThEn reference type of type
+//                          ^ keyword
+//                                    ^ keyword
+//                                         ^ keyword
+//                                            ^ variable.parameter
+      ElSe reference type of type
+//    ^ keyword
+//         ^ keyword
+//                   ^ keyword
+//                        ^ keyword
+//                           ^ variable.parameter
+    EnD;
+//  ^ keyword
+//     ^ punctuation.delimiter
