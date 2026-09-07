@@ -27,13 +27,15 @@
 (table_element type: (identifier) @type)
 (association_target name: (identifier) @type)
 (association_target alias: (alias name: (identifier) @variable.member))
+(composition_target name: (identifier) @type)
+(composition_target alias: (alias name: (identifier) @variable.member))
 
 ; Conditions
-((condition_path root: (identifier) @variable.member)
+((qualified_field root: (identifier) @variable.member)
  (#match? @variable.member "^_"))
-((condition_path root: (identifier) @type)
+((qualified_field root: (identifier) @type)
  (#not-match? @type "^_"))
-(condition_path member: (identifier) @variable.member)
+(qualified_field member: (identifier) @variable.member)
 (projection_reference) @constant.builtin
 (session_reference) @variable.builtin
 (condition_parameter name: (identifier) @variable.parameter)

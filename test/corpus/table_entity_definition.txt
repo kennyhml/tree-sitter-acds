@@ -152,10 +152,10 @@ define table entity association_cardinalities {
             name: (identifier))
           condition: (association_condition
             condition: (relational_expression
-              left: (condition_path
+              left: (qualified_field
                 root: (identifier)
                 member: (identifier))
-              right: (condition_path
+              right: (qualified_field
                 root: (projection_reference)
                 member: (identifier))))))
       (table_element
@@ -168,10 +168,10 @@ define table entity association_cardinalities {
             name: (identifier))
           condition: (association_condition
             condition: (relational_expression
-              left: (condition_path
+              left: (qualified_field
                 root: (identifier)
                 member: (identifier))
-              right: (condition_path
+              right: (qualified_field
                 root: (projection_reference)
                 member: (identifier))))))
       (table_element
@@ -184,10 +184,10 @@ define table entity association_cardinalities {
             name: (identifier))
           condition: (association_condition
             condition: (relational_expression
-              left: (condition_path
+              left: (qualified_field
                 root: (identifier)
                 member: (identifier))
-              right: (condition_path
+              right: (qualified_field
                 root: (projection_reference)
                 member: (identifier))))))
       (table_element
@@ -200,10 +200,10 @@ define table entity association_cardinalities {
             name: (identifier))
           condition: (association_condition
             condition: (relational_expression
-              left: (condition_path
+              left: (qualified_field
                 root: (identifier)
                 member: (identifier))
-              right: (condition_path
+              right: (qualified_field
                 root: (projection_reference)
                 member: (identifier))))))
       (table_element
@@ -216,10 +216,10 @@ define table entity association_cardinalities {
             name: (identifier))
           condition: (association_condition
             condition: (relational_expression
-              left: (condition_path
+              left: (qualified_field
                 root: (identifier)
                 member: (identifier))
-              right: (condition_path
+              right: (qualified_field
                 root: (projection_reference)
                 member: (identifier))))))
       (table_element
@@ -232,10 +232,10 @@ define table entity association_cardinalities {
             name: (identifier))
           condition: (association_condition
             condition: (relational_expression
-              left: (condition_path
+              left: (qualified_field
                 root: (identifier)
                 member: (identifier))
-              right: (condition_path
+              right: (qualified_field
                 root: (projection_reference)
                 member: (identifier))))))
       (table_element
@@ -248,10 +248,10 @@ define table entity association_cardinalities {
             name: (identifier))
           condition: (association_condition
             condition: (relational_expression
-              left: (condition_path
+              left: (qualified_field
                 root: (identifier)
                 member: (identifier))
-              right: (condition_path
+              right: (qualified_field
                 root: (projection_reference)
                 member: (identifier))))))
       (table_element
@@ -264,10 +264,10 @@ define table entity association_cardinalities {
             name: (identifier))
           condition: (association_condition
             condition: (relational_expression
-              left: (condition_path
+              left: (qualified_field
                 root: (identifier)
                 member: (identifier))
-              right: (condition_path
+              right: (qualified_field
                 root: (projection_reference)
                 member: (identifier))))))
       (table_element
@@ -280,10 +280,10 @@ define table entity association_cardinalities {
             name: (identifier))
           condition: (association_condition
             condition: (relational_expression
-              left: (condition_path
+              left: (qualified_field
                 root: (identifier)
                 member: (identifier))
-              right: (condition_path
+              right: (qualified_field
                 root: (projection_reference)
                 member: (identifier))))))
       (table_element
@@ -296,10 +296,10 @@ define table entity association_cardinalities {
             name: (identifier))
           condition: (association_condition
             condition: (relational_expression
-              left: (condition_path
+              left: (qualified_field
                 root: (identifier)
                 member: (identifier))
-              right: (condition_path
+              right: (qualified_field
                 root: (projection_reference)
                 member: (identifier))))))
       (table_element
@@ -312,10 +312,10 @@ define table entity association_cardinalities {
             name: (identifier))
           condition: (association_condition
             condition: (relational_expression
-              left: (condition_path
+              left: (qualified_field
                 root: (identifier)
                 member: (identifier))
-              right: (condition_path
+              right: (qualified_field
                 root: (projection_reference)
                 member: (identifier))))
           (default_filter
@@ -378,42 +378,42 @@ define table entity condition_variants {
                   (logical_expression
                     (logical_expression
                       (relational_expression
-                        left: (condition_path
+                        left: (qualified_field
                           root: (identifier)
                           member: (identifier))
-                        right: (condition_path
+                        right: (qualified_field
                           root: (projection_reference)
                           member: (identifier)))
                       (relational_expression
-                        left: (condition_path
+                        left: (qualified_field
                           root: (identifier)
                           member: (identifier))
-                        right: (condition_path
+                        right: (qualified_field
                           root: (projection_reference)
                           member: (identifier))))
                     (relational_expression
-                      left: (condition_path
+                      left: (qualified_field
                         root: (identifier)
                         member: (identifier))
-                      right: (condition_path
+                      right: (qualified_field
                         root: (projection_reference)
                         member: (identifier))))
                   (relational_expression
-                    left: (condition_path
+                    left: (qualified_field
                       root: (identifier)
                       member: (identifier))
-                    right: (condition_path
+                    right: (qualified_field
                       root: (projection_reference)
                       member: (identifier))))
                 (relational_expression
-                  left: (condition_path
+                  left: (qualified_field
                     root: (identifier)
                     member: (identifier))
-                  right: (condition_path
+                  right: (qualified_field
                     root: (projection_reference)
                     member: (identifier))))
               (relational_expression
-                left: (condition_path
+                left: (qualified_field
                   root: (identifier)
                   member: (identifier))
                 right: (integer_literal))))))
@@ -436,59 +436,59 @@ define table entity condition_variants {
                                 (logical_expression
                                   (logical_expression
                                     (relational_expression
-                                      left: (condition_path
+                                      left: (qualified_field
                                         root: (identifier)
                                         member: (identifier))
                                       lower: (integer_literal)
                                       upper: (integer_literal))
                                     (relational_expression
-                                      left: (condition_path
+                                      left: (qualified_field
                                         root: (identifier)
                                         member: (identifier))
                                       lower: (integer_literal)
                                       upper: (integer_literal)))))
                               (relational_expression
-                                left: (condition_path
+                                left: (qualified_field
                                   root: (identifier)
                                   member: (identifier))
                                 pattern: (string_literal)))
                             (relational_expression
-                              left: (condition_path
+                              left: (qualified_field
                                 root: (identifier)
                                 member: (identifier))
                               pattern: (string_literal)
                               escape: (string_literal)))
                           (relational_expression
-                            left: (condition_path
+                            left: (qualified_field
                               root: (identifier)
                               member: (identifier))))
                         (relational_expression
-                          left: (condition_path
+                          left: (qualified_field
                             root: (identifier)
                             member: (identifier))))
                       (relational_expression
-                        left: (condition_path
+                        left: (qualified_field
                           root: (identifier)
                           member: (identifier))))
                     (relational_expression
-                      left: (condition_path
+                      left: (qualified_field
                         root: (identifier)
                         member: (identifier))))
                   (relational_expression
-                    left: (condition_path
+                    left: (qualified_field
                       root: (identifier)
                       member: (identifier))
-                    right: (condition_path
+                    right: (qualified_field
                       root: (session_reference)
                       member: (identifier))))
                 (relational_expression
-                  left: (condition_path
+                  left: (qualified_field
                     root: (identifier)
                     member: (identifier))
                   right: (enum_literal
                     value: (enum_symbol))))
               (relational_expression
-                left: (condition_path
+                left: (qualified_field
                   root: (identifier)
                   member: (identifier))
                 right: (typed_literal
@@ -502,13 +502,19 @@ define table entity condition_variants {
                 right: (string_literal))
               (relational_expression
                 left: (identifier)
-                right: (condition_path
+                right: (qualified_field
                   root: (session_reference)
                   member: (identifier))))))))))
 
 ==================
-To-parent association
+Composition and to-parent association
 ==================
+
+define root table entity parent_entity {
+  key id : abap.int4;
+
+  _children : composition of exact one to many ChildEntity;
+}
 
 define table entity child_entity {
   key id : abap.int4;
@@ -521,25 +527,40 @@ define table entity child_entity {
 
 (source_file
   (table_entity_definition
-    (identifier)
-    (table_element_list
+    name: (identifier)
+    elements: (table_element_list
       (table_element
-        (identifier)
-        (builtin_type
-          (identifier)))
+        name: (identifier)
+        type: (builtin_type
+          name: (identifier)))
       (table_element
-        (identifier)
-        (to_parent_association
-          (association_target
-            (identifier))
-          (association_condition
-            (relational_expression
-              (condition_path
-                (identifier)
-                (identifier))
-              (condition_path
-                (projection_reference)
-                (identifier)))))))))
+        name: (identifier)
+        navigation: (composition
+          cardinality: (cardinality
+            source: (quantity)
+            target: (quantity))
+          target: (composition_target
+            name: (identifier))))))
+  (table_entity_definition
+    name: (identifier)
+    elements: (table_element_list
+      (table_element
+        name: (identifier)
+        type: (builtin_type
+          name: (identifier)))
+      (table_element
+        name: (identifier)
+        navigation: (to_parent_association
+          target: (association_target
+            name: (identifier))
+          condition: (association_condition
+            condition: (relational_expression
+              left: (qualified_field
+                root: (identifier)
+                member: (identifier))
+              right: (qualified_field
+                root: (projection_reference)
+                member: (identifier)))))))))
 
 ==================
 Reject empty table entity

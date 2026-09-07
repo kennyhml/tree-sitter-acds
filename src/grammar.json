@@ -732,6 +732,49 @@
         }
       ]
     },
+    "composition": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "keyword",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "PATTERN",
+              "value": "composition",
+              "flags": "i"
+            },
+            "named": false,
+            "value": "composition"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "cardinality",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "cardinality"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "target",
+          "content": {
+            "type": "SYMBOL",
+            "name": "composition_target"
+          }
+        }
+      ]
+    },
     "association_target": {
       "type": "SEQ",
       "members": [
@@ -750,6 +793,57 @@
                 },
                 "named": false,
                 "value": "to"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "alias",
+              "content": {
+                "type": "SYMBOL",
+                "name": "alias"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "composition_target": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "keyword",
+              "content": {
+                "type": "ALIAS",
+                "content": {
+                  "type": "PATTERN",
+                  "value": "of",
+                  "flags": "i"
+                },
+                "named": false,
+                "value": "of"
               }
             },
             {
@@ -1512,7 +1606,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "condition_path"
+          "name": "qualified_field"
         },
         {
           "type": "SYMBOL",
@@ -1520,7 +1614,7 @@
         }
       ]
     },
-    "condition_path": {
+    "qualified_field": {
       "type": "SEQ",
       "members": [
         {
@@ -3205,6 +3299,10 @@
                       {
                         "type": "SYMBOL",
                         "name": "to_parent_association"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "composition"
                       }
                     ]
                   }

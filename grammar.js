@@ -255,10 +255,37 @@ export default grammar({
         field("condition", $.association_condition),
       ),
 
+    /*
+     * NOTE:Table and view are slightly different, but not worth making separate rules for.
+     *
+     * Table entity:
+     * ... COMPOSITION [cardinality] OF target ...
+     *
+     * View entity:
+     * ... COMPOSITION [cardinality] [OF] target [AS _compos] ...
+     *
+     * @see https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENCDS_TABLE_ENTITY_COMPOS.html
+     * @see https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENCDS_COMPOSITION_V2.html
+     */
+    composition: ($) =>
+      seq(
+        kw("composition"),
+        field("cardinality", optional($.cardinality)),
+        field("target", $.composition_target),
+      ),
+
     // This now covers both association variants and to parent associations
     association_target: ($) =>
       seq(
         optional(kw("to")),
+        field("name", $.identifier),
+        optional(field("alias", $.alias)),
+      ),
+
+    // This covers both composition variants
+    composition_target: ($) =>
+      seq(
+        optional(kw("of")),
         field("name", $.identifier),
         optional(field("alias", $.alias)),
       ),
@@ -357,11 +384,11 @@ export default grammar({
         $.literal,
         $.enum_literal,
         $.identifier,
-        $.condition_path,
+        $.qualified_field,
         $.condition_parameter,
       ),
 
-    condition_path: ($) =>
+    qualified_field: ($) =>
       seq(
         field(
           "root",

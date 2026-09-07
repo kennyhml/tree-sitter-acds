@@ -41,7 +41,17 @@ define root table entity /DMO/flight
 //                   ^ variable.builtin
 //                            ^ variable.member
 
-  _parent : association to parent /DMO/flight_root
+  _items : composition of exact one to many /DMO/flight_item;
+//^ variable.member
+//                                          ^ type
+}
+
+define table entity /DMO/flight_item
+//                  ^ type
+{
+  key id : abap.int4;
+
+  _parent : association to parent /DMO/flight
 //^ variable.member
 //                                ^ type
     on _parent.id = $projection.id;
