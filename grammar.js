@@ -236,7 +236,26 @@ export default grammar({
         optional($.default_filter),
       ),
 
-    // This now covers both association variants
+    /*
+     * NOTE:Table and view are slightly different, but not worth making separate rules for.
+     *
+     * Table entity:
+     * ... ASSOCIATION TO PARENT target ON cds_cond ...
+     *
+     * View entity:
+     * ... ASSOCIATION TO PARENT target [AS _assoc] ON cds_cond
+     *
+     * @see https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENCDS_TABLE_ENTITY_TO_PARENT.html
+     * @see https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENCDS_TO_PARENT_ASSOC_V2.html
+     */
+    to_parent_association: ($) =>
+      seq(
+        ...kws("association", "to", "parent"),
+        field("target", $.association_target),
+        field("condition", $.association_condition),
+      ),
+
+    // This now covers both association variants and to parent associations
     association_target: ($) =>
       seq(
         optional(kw("to")),

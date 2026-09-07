@@ -669,6 +669,69 @@
         }
       ]
     },
+    "to_parent_association": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "keyword",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "PATTERN",
+              "value": "association",
+              "flags": "i"
+            },
+            "named": false,
+            "value": "association"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "keyword",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "PATTERN",
+              "value": "to",
+              "flags": "i"
+            },
+            "named": false,
+            "value": "to"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "keyword",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "PATTERN",
+              "value": "parent",
+              "flags": "i"
+            },
+            "named": false,
+            "value": "parent"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "target",
+          "content": {
+            "type": "SYMBOL",
+            "name": "association_target"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "condition",
+          "content": {
+            "type": "SYMBOL",
+            "name": "association_condition"
+          }
+        }
+      ]
+    },
     "association_target": {
       "type": "SEQ",
       "members": [
@@ -3133,8 +3196,17 @@
                   "type": "FIELD",
                   "name": "navigation",
                   "content": {
-                    "type": "SYMBOL",
-                    "name": "association"
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "association"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "to_parent_association"
+                      }
+                    ]
                   }
                 }
               ]

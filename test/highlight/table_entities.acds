@@ -19,30 +19,34 @@ define root table entity /DMO/flight
   _carrier : association of exact one to many /DMO/carrier
 //^ variable.member
 //                                            ^ type
-    on $projection.carrier = DEMO_CDS_TE_ASSOC.carrier
-//     ^ constant.builtin
-//                 ^ variable.member
-//                           ^ type
-//                                             ^ variable.member
-    with default filter _carrier.active = 'X';
-//                      ^ variable.member
+    on _carrier.id = /DMO/flight.id
+//     ^ variable.member
+//              ^ variable.member
+//                   ^ type
 //                               ^ variable.member
-//                                        ^ string
-
-  _condition : association to ConditionTarget on
-//                            ^ type
-    left_value = right_value
-//  ^ variable.member
+    and _carrier.currency = $projection.currency
+//      ^ variable.member
 //               ^ variable.member
-    and rank between minimum_rank and maximum_rank
-//      ^ variable.member
-//                   ^ variable.member
-//                                    ^ variable.member
-    and amount >= 100
-//      ^ variable.member
-//                ^ operator
+//                          ^ constant.builtin
+//                                      ^ variable.member
+    with default filter
+      active = 'X'
+//    ^ variable.member
+//             ^ string
+      and amount >= 100
+//        ^ variable.member
+//                  ^ operator
 //                   ^ number
-    and language = $session.system_language;
-//                 ^ variable.builtin
-//                          ^ variable.member
+      and language = $session.system_language;
+//                   ^ variable.builtin
+//                            ^ variable.member
+
+  _parent : association to parent /DMO/flight_root
+//^ variable.member
+//                                ^ type
+    on _parent.id = $projection.id;
+//     ^ variable.member
+//             ^ variable.member
+//                  ^ constant.builtin
+//                              ^ variable.member
 }

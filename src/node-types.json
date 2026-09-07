@@ -1751,6 +1751,10 @@
           {
             "type": "association",
             "named": true
+          },
+          {
+            "type": "to_parent_association",
+            "named": true
           }
         ]
       },
@@ -1851,6 +1855,50 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "to_parent_association",
+    "named": true,
+    "fields": {
+      "condition": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "association_condition",
+            "named": true
+          }
+        ]
+      },
+      "keyword": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "association",
+            "named": false
+          },
+          {
+            "type": "parent",
+            "named": false
+          },
+          {
+            "type": "to",
+            "named": false
+          }
+        ]
+      },
+      "target": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "association_target",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -2163,6 +2211,10 @@
   },
   {
     "type": "parameters",
+    "named": false
+  },
+  {
+    "type": "parent",
     "named": false
   },
   {

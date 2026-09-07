@@ -61,7 +61,7 @@ export const dataDefinitionRules = {
         seq(
           field("name", $.identifier),
           ":",
-          field("navigation", $.association),
+          field("navigation", choice($.association, $.to_parent_association)),
         ),
       ),
       ";",

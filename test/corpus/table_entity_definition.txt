@@ -107,32 +107,32 @@ define table entity association_cardinalities {
   id : abap.int4;
 
   _plain : association to PlainTarget
-    on _plain.id = id;
+    on _plain.id = $projection.id;
 
   _without_of : association one to many ShorthandTarget
-    on _without_of.id = id;
+    on _without_of.id = $projection.id;
 
   _exact_exact : association of exact one to exact one ExactExactTarget
-    on _exact_exact.id = id;
+    on _exact_exact.id = $projection.id;
   _exact_one : association of exact one to one ExactOneTarget
-    on _exact_one.id = id;
+    on _exact_one.id = $projection.id;
   _exact_many : association of exact one to many ExactManyTarget
-    on _exact_many.id = id;
+    on _exact_many.id = $projection.id;
 
   _one_exact : association of one to exact one OneExactTarget
-    on _one_exact.id = id;
+    on _one_exact.id = $projection.id;
   _one_one : association of one to one OneOneTarget
-    on _one_one.id = id;
+    on _one_one.id = $projection.id;
   _one_many : association of one to many OneManyTarget
-    on _one_many.id = id;
+    on _one_many.id = $projection.id;
 
   _many_exact : association of many to exact one ManyExactTarget
-    on _many_exact.id = id;
+    on _many_exact.id = $projection.id;
   _many_one : association of many to one ManyOneTarget
-    on _many_one.id = id;
+    on _many_one.id = $projection.id;
   _many_many : association of many to many ManyManyTarget
-    on _many_many.id = id
-    with default filter _many_many.active = 'X';
+    on _many_many.id = $projection.id
+    with default filter active = 'X';
 }
 
 ---
@@ -155,7 +155,9 @@ define table entity association_cardinalities {
               left: (condition_path
                 root: (identifier)
                 member: (identifier))
-              right: (identifier)))))
+              right: (condition_path
+                root: (projection_reference)
+                member: (identifier))))))
       (table_element
         name: (identifier)
         navigation: (association
@@ -169,7 +171,9 @@ define table entity association_cardinalities {
               left: (condition_path
                 root: (identifier)
                 member: (identifier))
-              right: (identifier)))))
+              right: (condition_path
+                root: (projection_reference)
+                member: (identifier))))))
       (table_element
         name: (identifier)
         navigation: (association
@@ -183,7 +187,9 @@ define table entity association_cardinalities {
               left: (condition_path
                 root: (identifier)
                 member: (identifier))
-              right: (identifier)))))
+              right: (condition_path
+                root: (projection_reference)
+                member: (identifier))))))
       (table_element
         name: (identifier)
         navigation: (association
@@ -197,7 +203,9 @@ define table entity association_cardinalities {
               left: (condition_path
                 root: (identifier)
                 member: (identifier))
-              right: (identifier)))))
+              right: (condition_path
+                root: (projection_reference)
+                member: (identifier))))))
       (table_element
         name: (identifier)
         navigation: (association
@@ -211,7 +219,9 @@ define table entity association_cardinalities {
               left: (condition_path
                 root: (identifier)
                 member: (identifier))
-              right: (identifier)))))
+              right: (condition_path
+                root: (projection_reference)
+                member: (identifier))))))
       (table_element
         name: (identifier)
         navigation: (association
@@ -225,7 +235,9 @@ define table entity association_cardinalities {
               left: (condition_path
                 root: (identifier)
                 member: (identifier))
-              right: (identifier)))))
+              right: (condition_path
+                root: (projection_reference)
+                member: (identifier))))))
       (table_element
         name: (identifier)
         navigation: (association
@@ -239,7 +251,9 @@ define table entity association_cardinalities {
               left: (condition_path
                 root: (identifier)
                 member: (identifier))
-              right: (identifier)))))
+              right: (condition_path
+                root: (projection_reference)
+                member: (identifier))))))
       (table_element
         name: (identifier)
         navigation: (association
@@ -253,7 +267,9 @@ define table entity association_cardinalities {
               left: (condition_path
                 root: (identifier)
                 member: (identifier))
-              right: (identifier)))))
+              right: (condition_path
+                root: (projection_reference)
+                member: (identifier))))))
       (table_element
         name: (identifier)
         navigation: (association
@@ -267,7 +283,9 @@ define table entity association_cardinalities {
               left: (condition_path
                 root: (identifier)
                 member: (identifier))
-              right: (identifier)))))
+              right: (condition_path
+                root: (projection_reference)
+                member: (identifier))))))
       (table_element
         name: (identifier)
         navigation: (association
@@ -281,7 +299,9 @@ define table entity association_cardinalities {
               left: (condition_path
                 root: (identifier)
                 member: (identifier))
-              right: (identifier)))))
+              right: (condition_path
+                root: (projection_reference)
+                member: (identifier))))))
       (table_element
         name: (identifier)
         navigation: (association
@@ -295,12 +315,12 @@ define table entity association_cardinalities {
               left: (condition_path
                 root: (identifier)
                 member: (identifier))
-              right: (identifier)))
+              right: (condition_path
+                root: (projection_reference)
+                member: (identifier))))
           (default_filter
             condition: (relational_expression
-              left: (condition_path
-                root: (identifier)
-                member: (identifier))
+              left: (identifier)
               right: (string_literal))))))))
 
 ==================
@@ -311,11 +331,11 @@ define table entity condition_variants {
   id : abap.int4;
 
   _comparison : association to ComparisonTarget on
-       _comparison.equal = equal_value
-    and _comparison.unequal <> unequal_value
-    and _comparison.less < lower_value
-    and _comparison.greater > upper_value
-    and _comparison.less_equal <= maximum_value
+       _comparison.equal = $projection.id
+    and _comparison.unequal <> $projection.id
+    and _comparison.less < $projection.id
+    and _comparison.greater > $projection.id
+    and _comparison.less_equal <= $projection.id
     and _comparison.greater_equal >= 0;
 
   _logic : association to LogicTarget on
@@ -333,7 +353,7 @@ define table entity condition_variants {
     and _logic.status = #OPEN
     and _logic.created = abap.dats'20260906'
     with default filter
-      _logic.active = 'X' or _logic.tenant = $projection.tenant;
+      active = 'X' or tenant = $session.client;
 }
 
 ---
@@ -361,27 +381,37 @@ define table entity condition_variants {
                         left: (condition_path
                           root: (identifier)
                           member: (identifier))
-                        right: (identifier))
+                        right: (condition_path
+                          root: (projection_reference)
+                          member: (identifier)))
                       (relational_expression
                         left: (condition_path
                           root: (identifier)
                           member: (identifier))
-                        right: (identifier)))
+                        right: (condition_path
+                          root: (projection_reference)
+                          member: (identifier))))
                     (relational_expression
                       left: (condition_path
                         root: (identifier)
                         member: (identifier))
-                      right: (identifier)))
+                      right: (condition_path
+                        root: (projection_reference)
+                        member: (identifier))))
                   (relational_expression
                     left: (condition_path
                       root: (identifier)
                       member: (identifier))
-                    right: (identifier)))
+                    right: (condition_path
+                      root: (projection_reference)
+                      member: (identifier))))
                 (relational_expression
                   left: (condition_path
                     root: (identifier)
                     member: (identifier))
-                  right: (identifier)))
+                  right: (condition_path
+                    root: (projection_reference)
+                    member: (identifier))))
               (relational_expression
                 left: (condition_path
                   root: (identifier)
@@ -468,17 +498,48 @@ define table entity condition_variants {
           (default_filter
             condition: (logical_expression
               (relational_expression
-                left: (condition_path
-                  root: (identifier)
-                  member: (identifier))
+                left: (identifier)
                 right: (string_literal))
               (relational_expression
-                left: (condition_path
-                  root: (identifier)
-                  member: (identifier))
+                left: (identifier)
                 right: (condition_path
-                  root: (projection_reference)
+                  root: (session_reference)
                   member: (identifier))))))))))
+
+==================
+To-parent association
+==================
+
+define table entity child_entity {
+  key id : abap.int4;
+
+  _parent : association to parent ParentEntity
+    on _parent.id = $projection.id;
+}
+
+---
+
+(source_file
+  (table_entity_definition
+    (identifier)
+    (table_element_list
+      (table_element
+        (identifier)
+        (builtin_type
+          (identifier)))
+      (table_element
+        (identifier)
+        (to_parent_association
+          (association_target
+            (identifier))
+          (association_condition
+            (relational_expression
+              (condition_path
+                (identifier)
+                (identifier))
+              (condition_path
+                (projection_reference)
+                (identifier)))))))))
 
 ==================
 Reject empty table entity
@@ -497,7 +558,7 @@ Reject KEY association
 ==================
 
 define table entity invalid_key_association {
-  key _target : association to Target on _target.id = id;
+  key _target : association to Target on _target.id = $projection.id;
 }
 
 ---
@@ -523,8 +584,7 @@ Reject incomplete logical condition
 ==================
 
 define table entity invalid_condition {
-  _target : association to Target on _target.id = id and;
+  _target : association to Target on _target.id = $projection.id and;
 }
 
 ---
-
