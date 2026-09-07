@@ -7,6 +7,7 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
+import { dataDefinitionRules } from "./grammar/ddl.js";
 import { functionDefinitionRules } from "./grammar/fdl.js";
 import { serviceDefinitionRules } from "./grammar/sdl.js";
 import { typeDefinitionRules } from "./grammar/tdl.js";
@@ -42,6 +43,7 @@ export default grammar({
           $.scalar_function_definition,
           $.service_definition,
           $.service_extension,
+          $.table_entity_definition,
         ),
       ),
 
@@ -211,9 +213,156 @@ export default grammar({
     // null can only be assigned to annotations that allow it.
     null_literal: (_) => /null/i,
 
+    /*
+     * NOTE:Table and view are slightly different, but not worth making separate rules for.
+     *
+     * Table entity:
+     * ... ASSOCIATION [cardinality] TO target ON cds_cond
+     *                 [ WITH DEFAULT FILTER cds_cond ] ...
+     *
+     * View entity:
+     * ... ASSOCIATION [cardinality] [TO] target [AS _assoc] ON cds_cond
+     *                 [ WITH DEFAULT FILTER cds_cond ] ...
+     *
+     * @see https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENCDS_TABLE_ENTITY_ASSOC.html
+     * @see https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENCDS_SIMPLE_ASSOCIATION_V2.html
+     */
+    association: ($) =>
+      seq(
+        kw("association"),
+        optional(field("cardinality", $.cardinality)),
+        field("target", $.association_target),
+        field("condition", $.association_condition),
+        optional($.default_filter),
+      ),
+
+    // This now covers both association variants
+    association_target: ($) =>
+      seq(
+        optional(kw("to")),
+        field("name", $.identifier),
+        optional(field("alias", $.alias)),
+      ),
+
+    cardinality: ($) =>
+      choice(
+        field("target", $.numeric_cardinality),
+        seq(
+          optional(kw("of")),
+          field("source", $.quantity),
+          kw("to"),
+          field("target", $.quantity),
+        ),
+      ),
+
+    quantity: (_) => choice(...kws("one", "many"), seq(...kws("exact", "one"))),
+
+    numeric_quantity: ($) => choice($.integer_literal, "*"),
+
+    numeric_cardinality: ($) =>
+      seq(
+        "[",
+        optional(seq(field("min", $.numeric_quantity), "..")),
+        field("max", $.numeric_quantity),
+        "]",
+      ),
+
+    association_condition: ($) =>
+      seq(kw("on"), field("condition", $._logical_expression)),
+
+    default_filter: ($) =>
+      seq(
+        ...kws("with", "default", "filter"),
+        field("condition", $._logical_expression),
+      ),
+
+    // Wrapper such that a single relational expression is not needlessly
+    // contained in another logical expression in the CST.
+    _logical_expression: ($) =>
+      choice($.relational_expression, $.logical_expression),
+
+    /*
+     * rel_expr | NOT cond | cond AND cond | cond OR cond | ( cond )
+     *
+     * Operand restrictions depend on where the condition is used.
+     *
+     * @see https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENCDS_CONDITIONAL_EXPRESSION_V2.html
+     */
+    logical_expression: ($) =>
+      choice(
+        seq("(", $._logical_expression, ")"),
+        prec.right(3, seq(kw("not"), $._logical_expression)),
+        prec.left(
+          2,
+          seq($._logical_expression, kw("and"), $._logical_expression),
+        ),
+        prec.left(
+          1,
+          seq($._logical_expression, kw("or"), $._logical_expression),
+        ),
+      ),
+
+    // temporary, should probably refine the individual paths
+    relational_expression: ($) =>
+      seq(
+        field("left", $._conditional_operand),
+        choice(
+          seq(
+            field("operator", choice("=", "<>", "<", ">", "<=", ">=")),
+            field("right", $._conditional_operand),
+          ),
+          seq(
+            optional(kw("not")),
+            kw("between"),
+            field("lower", $._conditional_operand),
+            kw("and"),
+            field("upper", $._conditional_operand),
+          ),
+          seq(
+            optional(kw("not")),
+            kw("like"),
+            field("pattern", choice($.string_literal, $.typed_literal)),
+            optional(
+              seq(
+                kw("escape"),
+                field("escape", choice($.string_literal, $.typed_literal)),
+              ),
+            ),
+          ),
+          seq(kw("is"), optional(kw("not")), choice(kw("null"), kw("initial"))),
+        ),
+      ),
+
+    _conditional_operand: ($) =>
+      choice(
+        $.literal,
+        $.enum_literal,
+        $.identifier,
+        $.condition_path,
+        $.condition_parameter,
+      ),
+
+    condition_path: ($) =>
+      seq(
+        field(
+          "root",
+          choice($.identifier, $.projection_reference, $.session_reference),
+        ),
+        repeat1(
+          seq(token.immediate("."), field("member", $._immediate_identifier)),
+        ),
+      ),
+
+    projection_reference: (_) => /\$projection/i,
+
+    session_reference: (_) => /\$session/i,
+
+    condition_parameter: ($) => seq(":", field("name", $.identifier)),
+
     ...typeDefinitionRules,
     ...functionDefinitionRules,
     ...serviceDefinitionRules,
+    ...dataDefinitionRules,
 
     /*
      * - A name must start with a letter, slash character, or underscore.
@@ -242,4 +391,18 @@ export default grammar({
  */
 function commaSep1(rule) {
   return seq(rule, repeat(seq(",", rule)));
+}
+
+/**
+ * @param {string} word
+ */
+function kw(word) {
+  return field("keyword", alias(new RegExp(word, "i"), word));
+}
+
+/**
+ * @param {string[]} words
+ */
+function kws(...words) {
+  return words.map(kw);
 }

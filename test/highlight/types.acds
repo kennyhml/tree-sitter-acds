@@ -30,9 +30,9 @@ define type literals : amount_alias EnUm
   IntVal = -2;
 //         ^ number
   DecVal = -0.5;
-//         ^ number
+//         ^ number.float
   SciVal = +1.25E-4;
-//         ^ number
+//         ^ number.float
   StrVal = 'define type enum initial true null';
 //          ^ string
   DateVal = AbAp.DaTs'20200101';

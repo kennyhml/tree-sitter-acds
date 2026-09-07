@@ -1,0 +1,530 @@
+==================
+Simple table type
+==================
+
+define table entity table_entity
+{
+  key key_element : abap.char(1);
+  col1 : demo_simple_type;
+};
+
+---
+
+(source_file
+  (table_entity_definition
+    name: (identifier)
+    elements: (table_element_list
+      (table_element
+        name: (identifier)
+        type: (builtin_type
+          name: (identifier)
+          parameters: (type_parameters
+            length: (integer_literal))))
+      (table_element
+        name: (identifier)
+        type: (identifier)))))
+
+==================
+Definition keyword, annotation, type, and terminator variants
+==================
+
+table entity bare_table {
+  value : abap.int4;
+}
+
+define table entity defined_table {
+  value : abap.char(20) null;
+};
+
+root table entity root_table {
+  value : DemoType;
+}
+
+@EndUserText.label: 'Complete table'
+DeFiNe RoOt TaBlE EnTiTy complete_table {
+  @EndUserText.label: 'Identifier'
+  KeY id : abap.raw(16);
+  amount : abap.dec(15, 2);
+};
+
+---
+
+(source_file
+  (table_entity_definition
+    (identifier)
+    (table_element_list
+      (table_element
+        (identifier)
+        (builtin_type
+          (identifier)))))
+  (table_entity_definition
+    (identifier)
+    (table_element_list
+      (table_element
+        (identifier)
+        (builtin_type
+          (identifier)
+          (type_parameters
+            (integer_literal))))))
+  (table_entity_definition
+    (identifier)
+    (table_element_list
+      (table_element
+        (identifier)
+        (identifier))))
+  (table_entity_definition
+    (annotation
+      (sub_annotation
+        (identifier)
+        (identifier))
+      (string_literal))
+    (identifier)
+    (table_element_list
+      (table_element
+        (annotation
+          (sub_annotation
+            (identifier)
+            (identifier))
+          (string_literal))
+        (identifier)
+        (builtin_type
+          (identifier)
+          (type_parameters
+            (integer_literal))))
+      (table_element
+        (identifier)
+        (builtin_type
+          (identifier)
+          (type_parameters
+            (integer_literal)
+            (integer_literal)))))))
+
+==================
+Association word cardinality variants and default filter
+==================
+
+define table entity association_cardinalities {
+  id : abap.int4;
+
+  _plain : association to PlainTarget
+    on _plain.id = id;
+
+  _without_of : association one to many ShorthandTarget
+    on _without_of.id = id;
+
+  _exact_exact : association of exact one to exact one ExactExactTarget
+    on _exact_exact.id = id;
+  _exact_one : association of exact one to one ExactOneTarget
+    on _exact_one.id = id;
+  _exact_many : association of exact one to many ExactManyTarget
+    on _exact_many.id = id;
+
+  _one_exact : association of one to exact one OneExactTarget
+    on _one_exact.id = id;
+  _one_one : association of one to one OneOneTarget
+    on _one_one.id = id;
+  _one_many : association of one to many OneManyTarget
+    on _one_many.id = id;
+
+  _many_exact : association of many to exact one ManyExactTarget
+    on _many_exact.id = id;
+  _many_one : association of many to one ManyOneTarget
+    on _many_one.id = id;
+  _many_many : association of many to many ManyManyTarget
+    on _many_many.id = id
+    with default filter _many_many.active = 'X';
+}
+
+---
+
+(source_file
+  (table_entity_definition
+    name: (identifier)
+    elements: (table_element_list
+      (table_element
+        name: (identifier)
+        type: (builtin_type
+          name: (identifier)))
+      (table_element
+        name: (identifier)
+        navigation: (association
+          target: (association_target
+            name: (identifier))
+          condition: (association_condition
+            condition: (relational_expression
+              left: (condition_path
+                root: (identifier)
+                member: (identifier))
+              right: (identifier)))))
+      (table_element
+        name: (identifier)
+        navigation: (association
+          cardinality: (cardinality
+            source: (quantity)
+            target: (quantity))
+          target: (association_target
+            name: (identifier))
+          condition: (association_condition
+            condition: (relational_expression
+              left: (condition_path
+                root: (identifier)
+                member: (identifier))
+              right: (identifier)))))
+      (table_element
+        name: (identifier)
+        navigation: (association
+          cardinality: (cardinality
+            source: (quantity)
+            target: (quantity))
+          target: (association_target
+            name: (identifier))
+          condition: (association_condition
+            condition: (relational_expression
+              left: (condition_path
+                root: (identifier)
+                member: (identifier))
+              right: (identifier)))))
+      (table_element
+        name: (identifier)
+        navigation: (association
+          cardinality: (cardinality
+            source: (quantity)
+            target: (quantity))
+          target: (association_target
+            name: (identifier))
+          condition: (association_condition
+            condition: (relational_expression
+              left: (condition_path
+                root: (identifier)
+                member: (identifier))
+              right: (identifier)))))
+      (table_element
+        name: (identifier)
+        navigation: (association
+          cardinality: (cardinality
+            source: (quantity)
+            target: (quantity))
+          target: (association_target
+            name: (identifier))
+          condition: (association_condition
+            condition: (relational_expression
+              left: (condition_path
+                root: (identifier)
+                member: (identifier))
+              right: (identifier)))))
+      (table_element
+        name: (identifier)
+        navigation: (association
+          cardinality: (cardinality
+            source: (quantity)
+            target: (quantity))
+          target: (association_target
+            name: (identifier))
+          condition: (association_condition
+            condition: (relational_expression
+              left: (condition_path
+                root: (identifier)
+                member: (identifier))
+              right: (identifier)))))
+      (table_element
+        name: (identifier)
+        navigation: (association
+          cardinality: (cardinality
+            source: (quantity)
+            target: (quantity))
+          target: (association_target
+            name: (identifier))
+          condition: (association_condition
+            condition: (relational_expression
+              left: (condition_path
+                root: (identifier)
+                member: (identifier))
+              right: (identifier)))))
+      (table_element
+        name: (identifier)
+        navigation: (association
+          cardinality: (cardinality
+            source: (quantity)
+            target: (quantity))
+          target: (association_target
+            name: (identifier))
+          condition: (association_condition
+            condition: (relational_expression
+              left: (condition_path
+                root: (identifier)
+                member: (identifier))
+              right: (identifier)))))
+      (table_element
+        name: (identifier)
+        navigation: (association
+          cardinality: (cardinality
+            source: (quantity)
+            target: (quantity))
+          target: (association_target
+            name: (identifier))
+          condition: (association_condition
+            condition: (relational_expression
+              left: (condition_path
+                root: (identifier)
+                member: (identifier))
+              right: (identifier)))))
+      (table_element
+        name: (identifier)
+        navigation: (association
+          cardinality: (cardinality
+            source: (quantity)
+            target: (quantity))
+          target: (association_target
+            name: (identifier))
+          condition: (association_condition
+            condition: (relational_expression
+              left: (condition_path
+                root: (identifier)
+                member: (identifier))
+              right: (identifier)))))
+      (table_element
+        name: (identifier)
+        navigation: (association
+          cardinality: (cardinality
+            source: (quantity)
+            target: (quantity))
+          target: (association_target
+            name: (identifier))
+          condition: (association_condition
+            condition: (relational_expression
+              left: (condition_path
+                root: (identifier)
+                member: (identifier))
+              right: (identifier)))
+          (default_filter
+            condition: (relational_expression
+              left: (condition_path
+                root: (identifier)
+                member: (identifier))
+              right: (string_literal))))))))
+
+==================
+Logical and relational condition variants
+==================
+
+define table entity condition_variants {
+  id : abap.int4;
+
+  _comparison : association to ComparisonTarget on
+       _comparison.equal = equal_value
+    and _comparison.unequal <> unequal_value
+    and _comparison.less < lower_value
+    and _comparison.greater > upper_value
+    and _comparison.less_equal <= maximum_value
+    and _comparison.greater_equal >= 0;
+
+  _logic : association to LogicTarget on
+    not (
+      _logic.rank between 1 and 3
+      or _logic.score not between -10 and +10
+    )
+    and _logic.name like 'A%'
+    and _logic.code not like 'A#_%' escape '#'
+    and _logic.nullable is null
+    and _logic.required is not null
+    and _logic.empty is initial
+    and _logic.filled is not initial
+    and _logic.language = $session.system_language
+    and _logic.status = #OPEN
+    and _logic.created = abap.dats'20260906'
+    with default filter
+      _logic.active = 'X' or _logic.tenant = $projection.tenant;
+}
+
+---
+
+(source_file
+  (table_entity_definition
+    name: (identifier)
+    elements: (table_element_list
+      (table_element
+        name: (identifier)
+        type: (builtin_type
+          name: (identifier)))
+      (table_element
+        name: (identifier)
+        navigation: (association
+          target: (association_target
+            name: (identifier))
+          condition: (association_condition
+            condition: (logical_expression
+              (logical_expression
+                (logical_expression
+                  (logical_expression
+                    (logical_expression
+                      (relational_expression
+                        left: (condition_path
+                          root: (identifier)
+                          member: (identifier))
+                        right: (identifier))
+                      (relational_expression
+                        left: (condition_path
+                          root: (identifier)
+                          member: (identifier))
+                        right: (identifier)))
+                    (relational_expression
+                      left: (condition_path
+                        root: (identifier)
+                        member: (identifier))
+                      right: (identifier)))
+                  (relational_expression
+                    left: (condition_path
+                      root: (identifier)
+                      member: (identifier))
+                    right: (identifier)))
+                (relational_expression
+                  left: (condition_path
+                    root: (identifier)
+                    member: (identifier))
+                  right: (identifier)))
+              (relational_expression
+                left: (condition_path
+                  root: (identifier)
+                  member: (identifier))
+                right: (integer_literal))))))
+      (table_element
+        name: (identifier)
+        navigation: (association
+          target: (association_target
+            name: (identifier))
+          condition: (association_condition
+            condition: (logical_expression
+              (logical_expression
+                (logical_expression
+                  (logical_expression
+                    (logical_expression
+                      (logical_expression
+                        (logical_expression
+                          (logical_expression
+                            (logical_expression
+                              (logical_expression
+                                (logical_expression
+                                  (logical_expression
+                                    (relational_expression
+                                      left: (condition_path
+                                        root: (identifier)
+                                        member: (identifier))
+                                      lower: (integer_literal)
+                                      upper: (integer_literal))
+                                    (relational_expression
+                                      left: (condition_path
+                                        root: (identifier)
+                                        member: (identifier))
+                                      lower: (integer_literal)
+                                      upper: (integer_literal)))))
+                              (relational_expression
+                                left: (condition_path
+                                  root: (identifier)
+                                  member: (identifier))
+                                pattern: (string_literal)))
+                            (relational_expression
+                              left: (condition_path
+                                root: (identifier)
+                                member: (identifier))
+                              pattern: (string_literal)
+                              escape: (string_literal)))
+                          (relational_expression
+                            left: (condition_path
+                              root: (identifier)
+                              member: (identifier))))
+                        (relational_expression
+                          left: (condition_path
+                            root: (identifier)
+                            member: (identifier))))
+                      (relational_expression
+                        left: (condition_path
+                          root: (identifier)
+                          member: (identifier))))
+                    (relational_expression
+                      left: (condition_path
+                        root: (identifier)
+                        member: (identifier))))
+                  (relational_expression
+                    left: (condition_path
+                      root: (identifier)
+                      member: (identifier))
+                    right: (condition_path
+                      root: (session_reference)
+                      member: (identifier))))
+                (relational_expression
+                  left: (condition_path
+                    root: (identifier)
+                    member: (identifier))
+                  right: (enum_literal
+                    value: (enum_symbol))))
+              (relational_expression
+                left: (condition_path
+                  root: (identifier)
+                  member: (identifier))
+                right: (typed_literal
+                  type: (builtin_type
+                    name: (identifier))
+                  value: (string_literal)))))
+          (default_filter
+            condition: (logical_expression
+              (relational_expression
+                left: (condition_path
+                  root: (identifier)
+                  member: (identifier))
+                right: (string_literal))
+              (relational_expression
+                left: (condition_path
+                  root: (identifier)
+                  member: (identifier))
+                right: (condition_path
+                  root: (projection_reference)
+                  member: (identifier))))))))))
+
+==================
+Reject empty table entity
+:error
+==================
+
+define table entity empty_table {}
+
+---
+
+
+
+==================
+Reject KEY association
+:error
+==================
+
+define table entity invalid_key_association {
+  key _target : association to Target on _target.id = id;
+}
+
+---
+
+
+
+==================
+Reject element without semicolon
+:error
+==================
+
+define table entity invalid_element {
+  value : abap.int4
+}
+
+---
+
+
+
+==================
+Reject incomplete logical condition
+:error
+==================
+
+define table entity invalid_condition {
+  _target : association to Target on _target.id = id and;
+}
+
+---
+

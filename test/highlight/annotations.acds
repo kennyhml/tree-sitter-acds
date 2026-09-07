@@ -10,8 +10,8 @@
     // <- property
 //       ^ punctuation.delimiter
 //        ^ property
-//                  ^ constant.builtin
-//                        ^ constant.builtin
+//                  ^ boolean
+//                        ^ boolean
 //                               ^ constant.builtin
     mode: #ACTIVE,
     // <- property

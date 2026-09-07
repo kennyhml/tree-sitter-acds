@@ -4,6 +4,7 @@
   "type"
 ] @keyword
 (_ keyword: _ @keyword)
+(table_element "key" @keyword.modifier)
 
 ; Comments
 [
@@ -19,6 +20,27 @@
 (enum_type_definition name: (identifier) @type)
 (enum_type_definition base_type: (identifier) @type)
 (scalar_typing type: (identifier) @type)
+
+; Tables
+(table_entity_definition name: (identifier) @type)
+(table_element name: (identifier) @variable.member)
+(table_element type: (identifier) @type)
+(association_target name: (identifier) @type)
+(association_target alias: (alias name: (identifier) @variable.member))
+
+; Conditions
+((condition_path root: (identifier) @variable.member)
+ (#match? @variable.member "^_"))
+((condition_path root: (identifier) @type)
+ (#not-match? @type "^_"))
+(condition_path member: (identifier) @variable.member)
+(projection_reference) @constant.builtin
+(session_reference) @variable.builtin
+(condition_parameter name: (identifier) @variable.parameter)
+(relational_expression left: (identifier) @variable.member)
+(relational_expression right: (identifier) @variable.member)
+(relational_expression lower: (identifier) @variable.member)
+(relational_expression upper: (identifier) @variable.member)
 
 ; Functions and parameters
 (scalar_function_definition name: (identifier) @function)
@@ -42,17 +64,15 @@
 (enum_constant_definition name: (identifier) @constant)
 (enum_literal) @constant
 
-[
-  (boolean_literal)
-  (null_literal)
-] @constant.builtin
+(boolean_literal) @boolean
+(null_literal) @constant.builtin
 
 ; Literals
+(integer_literal) @number
 [
-  (integer_literal)
   (decimal_literal)
   (scientific_literal)
-] @number
+] @number.float
 
 (string_literal) @string
 
@@ -85,5 +105,12 @@
 ; Operators
 [
   "="
+  "<>"
+  "<"
+  ">"
+  "<="
+  ">="
   "=>"
+  ".."
+  "*"
 ] @operator

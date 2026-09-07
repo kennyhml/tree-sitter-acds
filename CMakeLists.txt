@@ -21,6 +21,7 @@ find_program(TREE_SITTER_CLI tree-sitter DOC "Tree-sitter CLI")
 
 set(GRAMMAR_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/grammar.js"
+    "${CMAKE_CURRENT_SOURCE_DIR}/grammar/ddl.js"
     "${CMAKE_CURRENT_SOURCE_DIR}/grammar/tdl.js"
     "${CMAKE_CURRENT_SOURCE_DIR}/grammar/fdl.js"
     "${CMAKE_CURRENT_SOURCE_DIR}/grammar/sdl.js")

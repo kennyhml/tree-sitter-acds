@@ -1,0 +1,48 @@
+@EndUserText.label: 'Flight table'
+define root table entity /DMO/flight
+// <- keyword
+//                       ^ type
+{
+  key id : abap.int4;
+//^ keyword.modifier
+//    ^ variable.member
+//         ^ module
+//              ^ type.builtin
+
+  amount : abap.dec(15, 2) null;
+//^ variable.member
+//                  ^ number
+  currency : CurrencyCode;
+//^ variable.member
+//           ^ type
+
+  _carrier : association of exact one to many /DMO/carrier
+//^ variable.member
+//                                            ^ type
+    on $projection.carrier = DEMO_CDS_TE_ASSOC.carrier
+//     ^ constant.builtin
+//                 ^ variable.member
+//                           ^ type
+//                                             ^ variable.member
+    with default filter _carrier.active = 'X';
+//                      ^ variable.member
+//                               ^ variable.member
+//                                        ^ string
+
+  _condition : association to ConditionTarget on
+//                            ^ type
+    left_value = right_value
+//  ^ variable.member
+//               ^ variable.member
+    and rank between minimum_rank and maximum_rank
+//      ^ variable.member
+//                   ^ variable.member
+//                                    ^ variable.member
+    and amount >= 100
+//      ^ variable.member
+//                ^ operator
+//                   ^ number
+    and language = $session.system_language;
+//                 ^ variable.builtin
+//                          ^ variable.member
+}
