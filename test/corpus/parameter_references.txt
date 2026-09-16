@@ -1,0 +1,187 @@
+==================
+Parameter projection with alias and mixed-case reference in WHERE
+==================
+
+view entity RequestedView
+  with parameters p_id : IdType
+  as select from Source {
+    $parameters.p_id as RequestedId
+  }
+  where $PaRaMeTeRs.p_id = id
+
+---
+
+(source_file
+  (view_entity_definition
+    name: (identifier)
+    parameters: (view_parameters
+      (view_parameter
+        name: (identifier)
+        type: (identifier)))
+    query: (view_query
+      source: (data_source
+        entity: (identifier))
+      elements: (view_element_list
+        (view_element
+          value: (parameter_ref
+            name: (identifier))
+          alias: (alias
+            name: (identifier))))
+      where: (where_clause
+        condition: (relational_expression
+          left: (parameter_ref
+            name: (identifier))
+          right: (identifier))))))
+
+==================
+Parameters in both BETWEEN bounds and LIKE pattern
+==================
+
+view entity FilteredView
+  with parameters
+    p_min : AmountType,
+    p_max : AmountType,
+    p_pattern : PatternType
+  as select from Source { id }
+  where amount between $parameters.p_min and $parameters.p_max
+    and name like $parameters.p_pattern
+
+---
+
+(source_file
+  (view_entity_definition
+    name: (identifier)
+    parameters: (view_parameters
+      (view_parameter
+        name: (identifier)
+        type: (identifier))
+      (view_parameter
+        name: (identifier)
+        type: (identifier))
+      (view_parameter
+        name: (identifier)
+        type: (identifier)))
+    query: (view_query
+      source: (data_source
+        entity: (identifier))
+      elements: (view_element_list
+        (view_element
+          field: (identifier)))
+      where: (where_clause
+        condition: (logical_expression
+          (relational_expression
+            left: (identifier)
+            lower: (parameter_ref
+              name: (identifier))
+            upper: (parameter_ref
+              name: (identifier)))
+          (relational_expression
+            left: (identifier)
+            pattern: (parameter_ref
+              name: (identifier))))))))
+
+==================
+Parameter in association ON and default filter
+==================
+
+view entity AssociationView
+  with parameters p_id : IdType
+  as select from Source
+    association to Target as _target on _target.id = $parameters.p_id
+      with default filter id = $parameters.p_id
+  { id, _target }
+
+---
+
+(source_file
+  (view_entity_definition
+    name: (identifier)
+    parameters: (view_parameters
+      (view_parameter
+        name: (identifier)
+        type: (identifier)))
+    query: (view_query
+      source: (data_source
+        entity: (identifier))
+      associations: (associations
+        (association
+          target: (association_target
+            name: (identifier)
+            alias: (alias
+              name: (identifier)))
+          condition: (association_condition
+            condition: (relational_expression
+              left: (qualified_field
+                root: (identifier)
+                member: (identifier))
+              right: (parameter_ref
+                name: (identifier))))
+          (default_filter
+            condition: (relational_expression
+              left: (identifier)
+              right: (parameter_ref
+                name: (identifier))))))
+      elements: (view_element_list
+        (view_element
+          field: (identifier))
+        (view_element
+          field: (identifier))))))
+
+==================
+Reject parameter reference without a name
+:error
+==================
+
+view entity MissingName
+  with parameters p_id : IdType
+  as select from Source { id }
+  where id = $parameters.
+
+---
+
+==================
+Reject whitespace before parameter reference dot
+:error
+==================
+
+view entity SpaceBeforeDot
+  with parameters p_id : IdType
+  as select from Source { id }
+  where id = $parameters .p_id
+
+---
+
+==================
+Reject whitespace after parameter reference dot
+:error
+==================
+
+view entity SpaceAfterDot
+  with parameters p_id : IdType
+  as select from Source { id }
+  where id = $parameters. p_id
+
+---
+
+==================
+Reject extra dotted member in parameter reference
+:error
+==================
+
+view entity ExtraMember
+  with parameters p_id : IdType
+  as select from Source { id }
+  where id = $parameters.p_id.member
+
+---
+
+==================
+Reject parameter projection without mandatory alias
+:error
+==================
+
+view entity MissingAlias
+  with parameters p_id : IdType
+  as select from Source { $parameters.p_id }
+
+---

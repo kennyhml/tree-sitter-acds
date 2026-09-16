@@ -1,0 +1,23 @@
+@EndUserText.label: 'Flight view'
+define root view entity /DMO/flight_view
+//                      ^ type
+  with parameters
+    p_currency : CurrencyCode
+//  ^ variable.parameter
+//               ^ type
+  as select from /DMO/flight as Flight
+//               ^ type
+//                              ^ type
+{
+  key Flight.id as FlightId,
+//^ keyword.modifier
+//                 ^ variable.member
+  currency,
+//^ variable.member
+  $parameters.p_currency as RequestedCurrency
+//^ constant.builtin
+//            ^ variable.parameter
+}
+where currency = :p_currency;
+//    ^ variable.member
+//                ^ variable.parameter

@@ -5,6 +5,7 @@
 ] @keyword
 (_ keyword: _ @keyword)
 (table_element "key" @keyword.modifier)
+(view_element "key" @keyword.modifier)
 
 ; Comments
 [
@@ -30,6 +31,15 @@
 (composition_target name: (identifier) @type)
 (composition_target alias: (alias name: (identifier) @variable.member))
 
+; Views
+(view_entity_definition name: (identifier) @type)
+(data_source entity: (identifier) @type)
+(data_source alias: (alias name: (identifier) @type))
+(view_element field: (identifier) @variable.member)
+(view_element alias: (alias name: (identifier) @variable.member))
+(view_parameter name: (identifier) @variable.parameter)
+(view_parameter type: (identifier) @type)
+
 ; Conditions
 ((qualified_field root: (identifier) @variable.member)
  (#match? @variable.member "^_"))
@@ -37,8 +47,10 @@
  (#not-match? @type "^_"))
 (qualified_field member: (identifier) @variable.member)
 (projection_reference) @constant.builtin
-(session_reference) @variable.builtin
+(session_reference) @constant.builtin
 (condition_parameter name: (identifier) @variable.parameter)
+(parameter_ref "$parameters" @constant.builtin)
+(parameter_ref name: (identifier) @variable.parameter)
 (relational_expression left: (identifier) @variable.member)
 (relational_expression right: (identifier) @variable.member)
 (relational_expression lower: (identifier) @variable.member)

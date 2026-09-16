@@ -39,24 +39,6 @@ export const functionDefinitionRules = {
   function_parameters: ($) =>
     seq(...kws("with", "parameters"), commaSep1($.function_parameter)),
 
-  /*
-   * ... [@parameter_annot1]
-   *     [@parameter_annot2]
-   *     ...
-   *     pname : typing
-   *     [@<parameter_annot1]
-   *     [@<parameter_annot2]
-   *     ...
-   *
-   * @see https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENCDS_F1_PARAM.html
-   */
-  view_parameter: ($) =>
-    seq(
-      field("name", $.identifier),
-      ":",
-      choice($._type_identifier, $.builtin_type),
-    ),
-
   function_parameter: ($) =>
     seq(field("name", $.identifier), ":", field("type", $.scalar_typing)),
 

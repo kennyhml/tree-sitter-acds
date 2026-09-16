@@ -22,7 +22,12 @@ export default grammar({
 
   extras: ($) => [/\s/, $.line_comment, $.block_comment],
 
-  supertypes: ($) => [$.literal, $.untyped_literal, $.annotation_value],
+  supertypes: ($) => [
+    $.literal,
+    $.untyped_literal,
+    $.annotation_value,
+    $.data_source,
+  ],
 
   /*
    * CDS does reserve a handful of keywords, but unfortunately not all of them.
@@ -44,6 +49,7 @@ export default grammar({
           $.service_definition,
           $.service_extension,
           $.table_entity_definition,
+          $.view_entity_definition,
         ),
       ),
 
@@ -232,7 +238,7 @@ export default grammar({
         kw("association"),
         optional(field("cardinality", $.cardinality)),
         field("target", $.association_target),
-        field("condition", $.association_condition),
+        field("on", $.on_condition),
         optional($.default_filter),
       ),
 
@@ -252,7 +258,7 @@ export default grammar({
       seq(
         ...kws("association", "to", "parent"),
         field("target", $.association_target),
-        field("condition", $.association_condition),
+        field("on", $.on_condition),
       ),
 
     /*
@@ -301,6 +307,62 @@ export default grammar({
         ),
       ),
 
+    // ... entity[parameters]|path_expr[AS alias] [join] ...
+    data_source: ($) =>
+      choice(
+        $.join,
+        seq(field("entity", $.identifier), optional(field("alias", $.alias))),
+      ),
+
+    /*
+     * ... { [INNER] [cardinality] JOIN
+     *     | LEFT OUTER [cardinality] JOIN
+     *     | RIGHT OUTER JOIN
+     *     | CROSS JOIN }
+     *       data_source [ON cds_cond] ...
+     *
+     * @see https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENCDS_JOINED_DATA_SOURCE_V2.html
+     */
+    join: ($) =>
+      choice(
+        seq(
+          optional(kw("inner")),
+          optional(field("cardinality", $.cardinality)),
+          kw("join"),
+        ),
+        seq(
+          ...kws("left", "outer"),
+          optional(field("cardinality", $.cardinality)),
+          kw("join"),
+        ),
+        seq(...kws("right", "outer", "join")),
+        seq(...kws("cross", "join")),
+        field("source", $.data_source),
+        optional(field("on", $.on_condition)),
+      ),
+
+    /*
+     * ... [source.]_assoc1[parameters][attributes]
+     *            [._assoc2[parameters][attributes] ... ] ...
+     *
+     * @see https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENCDS_PATH_EXPRESSION_V2.html
+     */
+    path_expression: ($) =>
+      seq(
+        field(
+          "source",
+          choice($.identifier, $.path_expression, $.qualified_field),
+        ),
+        optional(field("arguments", $.view_arguments)),
+        optional(field("attributes", $.view_attributes)),
+      ),
+
+    associations: ($) =>
+      repeat1(choice($.association, $.to_parent_association, $.composition)),
+
+    where_clause: ($) =>
+      seq(kw("where"), field("condition", $._logical_expression)),
+
     quantity: (_) => choice(...kws("one", "many"), seq(...kws("exact", "one"))),
 
     numeric_quantity: ($) => choice($.integer_literal, "*"),
@@ -313,7 +375,7 @@ export default grammar({
         "]",
       ),
 
-    association_condition: ($) =>
+    on_condition: ($) =>
       seq(kw("on"), field("condition", $._logical_expression)),
 
     default_filter: ($) =>
@@ -367,7 +429,10 @@ export default grammar({
           seq(
             optional(kw("not")),
             kw("like"),
-            field("pattern", choice($.string_literal, $.typed_literal)),
+            field(
+              "pattern",
+              choice($.string_literal, $.typed_literal, $.parameter_ref),
+            ),
             optional(
               seq(
                 kw("escape"),
@@ -386,6 +451,7 @@ export default grammar({
         $.identifier,
         $.qualified_field,
         $.condition_parameter,
+        $.parameter_ref,
       ),
 
     qualified_field: ($) =>
@@ -404,6 +470,13 @@ export default grammar({
     session_reference: (_) => /\$session/i,
 
     condition_parameter: ($) => seq(":", field("name", $.identifier)),
+
+    parameter_ref: ($) =>
+      seq(
+        alias(/\$parameters/i, "$parameters"),
+        token.immediate("."),
+        field("name", $._immediate_identifier),
+      ),
 
     ...typeDefinitionRules,
     ...functionDefinitionRules,

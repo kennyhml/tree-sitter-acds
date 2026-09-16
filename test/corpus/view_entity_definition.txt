@@ -1,0 +1,500 @@
+==================
+Minimal view without final separator
+==================
+
+view entity MinimalView as select from Source { id }
+
+---
+
+(source_file
+  (view_entity_definition
+    name: (identifier)
+    query: (view_query
+      source: (data_source
+        entity: (identifier))
+      elements: (view_element_list
+        (view_element
+          field: (identifier))))))
+
+==================
+Multiple comma-separated fields
+==================
+
+define view entity FieldsView as select from Source {
+  key id,
+  title,
+  amount
+};
+
+---
+
+(source_file
+  (view_entity_definition
+    name: (identifier)
+    query: (view_query
+      source: (data_source
+        entity: (identifier))
+      elements: (view_element_list
+        (view_element
+          field: (identifier))
+        (view_element
+          field: (identifier))
+        (view_element
+          field: (identifier))))))
+
+==================
+Mixed-case optional definition modifiers and terminators
+==================
+
+RoOt ViEw EnTiTy RootView As SeLeCt FrOm Source { id }
+WrItAbLe ViEw EnTiTy WritableView As SeLeCt FrOm Source { id };
+DeFiNe WrItAbLe RoOt ViEw EnTiTy CompleteView As SeLeCt FrOm Source { KeY id };
+
+---
+
+(source_file
+  (view_entity_definition
+    name: (identifier)
+    query: (view_query
+      source: (data_source
+        entity: (identifier))
+      elements: (view_element_list
+        (view_element
+          field: (identifier)))))
+  (view_entity_definition
+    name: (identifier)
+    query: (view_query
+      source: (data_source
+        entity: (identifier))
+      elements: (view_element_list
+        (view_element
+          field: (identifier)))))
+  (view_entity_definition
+    name: (identifier)
+    query: (view_query
+      source: (data_source
+        entity: (identifier))
+      elements: (view_element_list
+        (view_element
+          field: (identifier))))))
+
+==================
+Namespaced view and source names
+==================
+
+define view entity /demo/NamespacedView as select from /demo/Source { id }
+
+---
+
+(source_file
+  (view_entity_definition
+    name: (identifier)
+    query: (view_query
+      source: (data_source
+        entity: (identifier))
+      elements: (view_element_list
+        (view_element
+          field: (identifier))))))
+
+==================
+Repeated declaration and element annotations
+==================
+
+@EndUserText.label: 'Annotated view'
+@Metadata.ignorePropagatedAnnotations: true
+define view entity AnnotatedView as select from Source {
+  @EndUserText.label: 'Identifier'
+  @Search.defaultSearchElement: true
+  key id,
+  @EndUserText.label: 'Title'
+  title
+}
+
+---
+
+(source_file
+  (view_entity_definition
+    (annotation
+      name: (sub_annotation
+        parent: (identifier)
+        name: (identifier))
+      value: (string_literal))
+    (annotation
+      name: (sub_annotation
+        parent: (identifier)
+        name: (identifier))
+      value: (boolean_literal))
+    name: (identifier)
+    query: (view_query
+      source: (data_source
+        entity: (identifier))
+      elements: (view_element_list
+        (view_element
+          (annotation
+            name: (sub_annotation
+              parent: (identifier)
+              name: (identifier))
+            value: (string_literal))
+          (annotation
+            name: (sub_annotation
+              parent: (identifier)
+              name: (identifier))
+            value: (boolean_literal))
+          field: (identifier))
+        (view_element
+          (annotation
+            name: (sub_annotation
+              parent: (identifier)
+              name: (identifier))
+            value: (string_literal))
+          field: (identifier))))))
+
+==================
+Distinct selection with source and field aliases
+==================
+
+define view entity AliasedView as select DiStInCt from Source as src {
+  key src.id as Identifier,
+  src.title,
+  amount as Total
+};
+
+---
+
+(source_file
+  (view_entity_definition
+    name: (identifier)
+    query: (view_query
+      source: (data_source
+        entity: (identifier)
+        alias: (alias
+          name: (identifier)))
+      elements: (view_element_list
+        (view_element
+          field: (qualified_field
+            root: (identifier)
+            member: (identifier))
+          alias: (alias
+            name: (identifier)))
+        (view_element
+          field: (qualified_field
+            root: (identifier)
+            member: (identifier)))
+        (view_element
+          field: (identifier)
+          alias: (alias
+            name: (identifier)))))))
+
+==================
+Integer string and typed literals require aliases
+==================
+
+view entity LiteralView as select from Source {
+  42 as Answer,
+  'It''s a label' as Label,
+  abap.dats'20260101' as ValidFrom
+}
+
+---
+
+(source_file
+  (view_entity_definition
+    name: (identifier)
+    query: (view_query
+      source: (data_source
+        entity: (identifier))
+      elements: (view_element_list
+        (view_element
+          value: (integer_literal)
+          alias: (alias
+            name: (identifier)))
+        (view_element
+          value: (string_literal)
+          alias: (alias
+            name: (identifier)))
+        (view_element
+          value: (typed_literal
+            type: (builtin_type
+              name: (identifier))
+            value: (string_literal))
+          alias: (alias
+            name: (identifier)))))))
+
+==================
+Annotated parameters with user and builtin types and WHERE parameter use
+==================
+
+define view entity ParameterView
+  with parameters
+    @EndUserText.label: 'Identifier'
+    @Consumption.hidden: false
+    p_id : /demo/IdentifierType,
+    @EndUserText.label: 'Minimum amount'
+    p_min : abap.dec(15, 2)
+  as select from Source {
+    id,
+    amount
+  }
+  where id = :p_id and amount >= :p_min;
+
+---
+
+(source_file
+  (view_entity_definition
+    name: (identifier)
+    parameters: (view_parameters
+      (view_parameter
+        (annotation
+          name: (sub_annotation
+            parent: (identifier)
+            name: (identifier))
+          value: (string_literal))
+        (annotation
+          name: (sub_annotation
+            parent: (identifier)
+            name: (identifier))
+          value: (boolean_literal))
+        name: (identifier)
+        type: (identifier))
+      (view_parameter
+        (annotation
+          name: (sub_annotation
+            parent: (identifier)
+            name: (identifier))
+          value: (string_literal))
+        name: (identifier)
+        type: (builtin_type
+          name: (identifier)
+          parameters: (type_parameters
+            length: (integer_literal)
+            decimals: (integer_literal)))))
+    query: (view_query
+      source: (data_source
+        entity: (identifier))
+      elements: (view_element_list
+        (view_element
+          field: (identifier))
+        (view_element
+          field: (identifier)))
+      where: (where_clause
+        condition: (logical_expression
+          (relational_expression
+            left: (identifier)
+            right: (condition_parameter
+              name: (identifier)))
+          (relational_expression
+            left: (identifier)
+            right: (condition_parameter
+              name: (identifier))))))))
+
+==================
+Multiple associations composition and parent with exposed associations
+==================
+
+define root view entity AssociationView as select from Source as src
+  association [0..1] to Target as _target on _target.id = src.id
+  composition [0..*] of Child as _children
+  association to parent Parent as _parent on _parent.id = src.parent_id
+{
+  key src.id,
+  _target,
+  _children,
+  _parent as ParentLink
+}
+
+---
+
+(source_file
+  (view_entity_definition
+    name: (identifier)
+    query: (view_query
+      source: (data_source
+        entity: (identifier)
+        alias: (alias
+          name: (identifier)))
+      associations: (associations
+        (association
+          cardinality: (cardinality
+            target: (numeric_cardinality
+              min: (numeric_quantity
+                (integer_literal))
+              max: (numeric_quantity
+                (integer_literal))))
+          target: (association_target
+            name: (identifier)
+            alias: (alias
+              name: (identifier)))
+          condition: (association_condition
+            condition: (relational_expression
+              left: (qualified_field
+                root: (identifier)
+                member: (identifier))
+              right: (qualified_field
+                root: (identifier)
+                member: (identifier)))))
+        (composition
+          cardinality: (cardinality
+            target: (numeric_cardinality
+              min: (numeric_quantity
+                (integer_literal))
+              max: (numeric_quantity)))
+          target: (composition_target
+            name: (identifier)
+            alias: (alias
+              name: (identifier))))
+        (to_parent_association
+          target: (association_target
+            name: (identifier)
+            alias: (alias
+              name: (identifier)))
+          condition: (association_condition
+            condition: (relational_expression
+              left: (qualified_field
+                root: (identifier)
+                member: (identifier))
+              right: (qualified_field
+                root: (identifier)
+                member: (identifier))))))
+      elements: (view_element_list
+        (view_element
+          field: (qualified_field
+            root: (identifier)
+            member: (identifier)))
+        (view_element
+          field: (identifier))
+        (view_element
+          field: (identifier))
+        (view_element
+          field: (identifier)
+          alias: (alias
+            name: (identifier)))))))
+
+==================
+WHERE respects NOT AND OR precedence and parenthesized conditions
+==================
+
+view entity FilteredView as select from Source { id }
+where status = 'A' or not blocked = 'X' and
+  (owner = $session.user or amount > 0)
+
+---
+
+(source_file
+  (view_entity_definition
+    name: (identifier)
+    query: (view_query
+      source: (data_source
+        entity: (identifier))
+      elements: (view_element_list
+        (view_element
+          field: (identifier)))
+      where: (where_clause
+        condition: (logical_expression
+          (relational_expression
+            left: (identifier)
+            right: (string_literal))
+          (logical_expression
+            (logical_expression
+              (relational_expression
+                left: (identifier)
+                right: (string_literal)))
+            (logical_expression
+              (logical_expression
+                (relational_expression
+                  left: (identifier)
+                  right: (qualified_field
+                    root: (session_reference)
+                    member: (identifier)))
+                (relational_expression
+                  left: (identifier)
+                  right: (integer_literal))))))))))
+
+==================
+Reject empty view element list
+:error
+==================
+
+view entity EmptyView as select from Source {}
+
+---
+
+==================
+Reject missing comma between fields
+:error
+==================
+
+view entity MissingComma as select from Source { id title }
+
+---
+
+==================
+Reject semicolon-terminated view elements
+:error
+==================
+
+view entity ElementSemicolons as select from Source { id; title; }
+
+---
+
+==================
+Reject trailing comma in view element list
+:error
+==================
+
+view entity TrailingComma as select from Source { id, }
+
+---
+
+==================
+Reject missing source entity
+:error
+==================
+
+view entity MissingSource as select from { id }
+
+---
+
+==================
+Reject missing view name
+:error
+==================
+
+view entity as select from Source { id }
+
+---
+
+==================
+Reject AS without an alias name
+:error
+==================
+
+view entity MissingAlias as select from Source { id as }
+
+---
+
+==================
+Reject literal without mandatory alias
+:error
+==================
+
+view entity UnaliasedLiteral as select from Source { 42 }
+
+---
+
+==================
+Reject empty parameter list
+:error
+==================
+
+view entity EmptyParameters with parameters as select from Source { id }
+
+---
+
+==================
+Reject incomplete WHERE condition
+:error
+==================
+
+view entity IncompleteWhere as select from Source { id } where id = 1 and
+
+---

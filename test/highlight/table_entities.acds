@@ -38,7 +38,7 @@ define root table entity /DMO/flight
 //                  ^ operator
 //                   ^ number
       and language = $session.system_language;
-//                   ^ variable.builtin
+//                   ^ constant.builtin
 //                            ^ variable.member
 
   _items : composition of exact one to many /DMO/flight_item;
